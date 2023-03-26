@@ -38,12 +38,16 @@ ancestry=""
 sex=""
 keep_tmp=""
 force=""
+email=""
 
+pass=true
 force=false
 keep_tmp=false
 simulation_haplotype_mode="even"
 simulate_allSNPs=true
 is_1000Genome=false
+is_GIAB=false
+partition="scavenger"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -57,10 +61,14 @@ while [[ "$#" -gt 0 ]]; do
         --working-dir) working_dir="$2"; shift ;;
         --ancestry) ancestry="$2"; shift ;;
         --sex) sex="$2"; shift ;;
+        --email) email="$2"; shift ;;
+        --noPASSfilter) pass=false ;;
         --simulate-hets-only) simulate_allSNPs=false ;;
         --is-1000Genome) is_1000Genome=true ;;
+        --is-GIAB) is_GIAB=true ;;
         --simulate_random) simulation_haplotype_mode="random";;
         --keep-tmp) keep_tmp=true ;;
+        --hardac) partition="all" ;;
         ---force) force=true ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
@@ -105,7 +113,10 @@ if [ -z "${sex}" ]; then
     echo "--sex is required"
     exit 1
 fi
-
+if [ -z "${email}" ]; then
+    echo "--email is required"
+    exit 1
+fi
 echo "Running pipeline for sample $sample"
 
 
@@ -167,6 +178,8 @@ if [[ "$is_1000Genome" = true ]]; then
     extract_vcf_job_id=$(sbatch --parsable \
         --job-name=${sample}-extractVCF \
         --dependency=singleton \
+        --mail-user=$email \
+        -p $partition \
         $scripts_dir/0_extract_vcf_1000genome.slurm $sample $tmp_dir/VCF $vcf_path $bi_vcfgz $bihet_vcfgz)
     # prepare haplotype file
     haplotype_dir=$shapeit2_working_dir/modified_haplotype
@@ -174,39 +187,49 @@ if [[ "$is_1000Genome" = true ]]; then
     modify_haplotype_job_id=$(sbatch --parsable \
         --job-name=${sample}-modifyHaplotype-s2 \
         --dependency=singleton \
+        --mail-user=$email \
+        -p $partition \
         $scripts_dir/5_prepare_1000Genome_haplotype_s2.slurm $sample $shapeit2_ref_sample $shapeit2_ref_dir $haplotype_dir )
     shapeit2_haplotype_dir=$haplotype_dir
+    all_job_ids+=( $modify_haplotype_job_id )
 else
     # TODO test this
     # individual VCF
     extract_vcf_job_id=$(sbatch --parsable \
         --job-name=${sample}-filterVCF \
         --dependency=singleton \
-        $scripts_dir/0_filter_vcf_individual.slurm $sample $vcf_path $tmp_dir/VCF $bi_vcfgz $bihet_vcfgz)
-    shapeit4_haplotype_dir=$shapeit4_ref_dir
+        --mail-user=$email \
+        -p $partition \
+        $scripts_dir/0_filter_vcf_individual.slurm $sample $vcf_path $tmp_dir/VCF $bi_vcfgz $bihet_vcfgz $pass)
     shapeit2_haplotype_dir=$shapeit2_ref_dir
-    # prepare shapeit4 reference file
-    haplotype4_dir=$shapeit4_working_dir/modified_reference
-    shapeit4_ref_dir=$shapeit4_ref_dir
-    modify_haplotype_job_id=$(sbatch --parsable \
-        --job-name=${sample}-modifyHaplotype-s4 \
-        --dependency=singleton \
-        $scripts_dir/5_prepare_1000Genome_haplotype_s4.slurm $sample $shapeit4_ref_dir $haplotype4_dir )
-    shapeit4_haplotype_dir=$haplotype4_dir
+    if [[ "$is_GIAB" = true ]]; then
+        shapeit4_haplotype_dir=$shapeit4_ref_dir
+        # prepare shapeit4 reference file
+        haplotype4_dir=$shapeit4_working_dir/modified_reference
+        modify_haplotype_job_id=$(sbatch --parsable \
+            --job-name=${sample}-modifyHaplotype-s4 \
+            --dependency=singleton \
+            --mail-user=$email \
+            -p $partition \
+            $scripts_dir/5_prepare_1000Genome_haplotype_s4.slurm $sample $shapeit4_ref_dir $haplotype4_dir )
+        shapeit4_haplotype_dir=$haplotype4_dir
+        all_job_ids+=( $modify_haplotype_job_id )
+    fi
 fi
 all_job_ids+=( $extract_vcf_job_id )
-all_job_ids+=( $modify_haplotype_job_id )
+
 
 # step1: trim fastq reads
 trim_real_fastq_job_id=$(sbatch --parsable \
     --job-name=${sample}-trimFastq \
     --dependency=singleton \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/1_trim_fastq.slurm \
     $Trimmomatic \
     $sample $raw_fq_fwd $raw_fq_rev \
     $trimmedfastq_dir)
 all_job_ids+=( $trim_real_fastq_job_id )
-
 
 # step2: align trimmed fastq reads and then mark duplicates & WASP filtering      (depend on step1)
 star_working_dir=$tmp_dir/star_2pass_WASP_m${mismatchN}
@@ -215,6 +238,8 @@ align_real_fastq_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$trim_real_fastq_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-alignment \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/2__star_alignment.slurm \
     $sample \
     $ref $star_ind $AnnoDir $mismatchN \
@@ -229,6 +254,8 @@ markDuplicates_waspFilter_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$align_real_fastq_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-markduplicates-wasp \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/2__markDuplicates_waspFilter.slurm \
     $star_out_file \
     $star_working_dir \
@@ -241,6 +268,8 @@ simulator_sam_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$markDuplicates_waspFilter_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-prep-simulation-sam \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/convert_bam_to_sam.slurm $real_bam $real_sam \
 )
 all_job_ids+=( $simulator_sam_job_id )
@@ -249,6 +278,8 @@ checkseq_depth_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$markDuplicates_waspFilter_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-check_seqDepth \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/2__check_seqDepth.slurm \
     $star_working_dir \
     $working_dir \
@@ -260,6 +291,8 @@ hetSNP_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-hetSNP \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/BEASTIE_extractHets.slurm \
     $sample $bihet_vcfgz $gencode_dir 1 22 $hetSNP \
     $tmp_dir \
@@ -271,6 +304,8 @@ mpileup_real_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$markDuplicates_waspFilter_job_id:$hetSNP_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-mpileup \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/3_samtools_mpileup.slurm \
     $sample $tmp_dir $tmp_dir/mpileup $hetSNP $real_bam $real_pileup $ref_fasta \
     )
@@ -282,6 +317,8 @@ genotypingEr_filter_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$trim_real_fastq_job_id:$align_real_fastq_job_id:$markDuplicates_waspFilter_job_id:$hetSNP_job_id:$mpileup_real_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-genotypingEr \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/BEASTIE_filterGenotypingError.slurm \
     $bihet_vcfgz \
     $sample \
@@ -302,6 +339,8 @@ genotypingEr_filter_job2_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$genotypingEr_filter_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-genotypingEr-filter \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/4_filter_genotyingEr.slurm \
     $genotypingError_sites $bi_vcfgz $bihet_vcfgz $filtered_bi_vcfgz $filtered_bihet_vcfgz $tmp_dir \
     )
@@ -312,6 +351,8 @@ simulator_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$markDuplicates_waspFilter_job_id:$genotypingEr_filter_job2_id:$simulator_sam_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-simulatefastq-${simulation_haplotype_mode}-${simulation_depth} \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/6_run_simulation.slurm \
     $sample \
     $simulation_fwd_fastq \
@@ -327,32 +368,36 @@ simulator_job_id=$(sbatch --parsable \
     )
 all_job_ids+=( $simulator_job_id )
 
-if [[ "$is_1000Genome" == true ]]; then
-    # step5: shapeit2 phasing
-    shapeit2_ref_sample=$shapeit2_haplotype_dir/$shapeit2_ref_sample_name
-    shapeit2_job_dependencies=($modify_haplotype_job_id $genotypingEr_filter_job2_id)
-    shapeit2_phasing_job_id=$(sbatch --parsable \
-        --nice \
-        --dependency=singleton,afterok:$(echo "${shapeit2_job_dependencies[@]}" | tr ' ' ':') \
-        --kill-on-invalid-dep=yes \
-        --job-name=${sample}-shapeit2 \
-        $scripts_dir/5_run_shapeit2.slurm \
-        $sample \
-        $shapeit2_working_dir \
-        $shapeit2_ref_dir \
-        $shapeit2_haplotype_dir \
-        $shapeit2_ref_sample \
-        $filtered_bihet_vcfgz \
-        $shapeit2 \
-        )
-    all_job_ids+=( $shapeit2_phasing_job_id )
-else
+# step5: shapeit2 phasing
+shapeit2_ref_sample=$shapeit2_haplotype_dir/$shapeit2_ref_sample_name
+shapeit2_job_dependencies=($modify_haplotype_job_id $genotypingEr_filter_job2_id)
+shapeit2_phasing_job_id=$(sbatch --parsable \
+    --nice \
+    --dependency=singleton,afterok:$(echo "${shapeit2_job_dependencies[@]}" | tr ' ' ':') \
+    --kill-on-invalid-dep=yes \
+    --job-name=${sample}-shapeit2 \
+    --mail-user=$email \
+    -p $partition \
+    $scripts_dir/5_run_shapeit2.slurm \
+    $sample \
+    $shapeit2_working_dir \
+    $shapeit2_ref_dir \
+    $shapeit2_haplotype_dir \
+    $shapeit2_ref_sample \
+    $filtered_bihet_vcfgz \
+    $shapeit2 \
+    )
+all_job_ids+=( $shapeit2_phasing_job_id )
+
+if [[ "$is_GIAB" = true ]]; then
     shapeit4_job_dependencies=($extract_vcf_job_id $modify_haplotype_job_id)
     shapeit4_phasing_job_id=$(sbatch --parsable \
         --nice \
         --dependency=singleton,afterok:$(echo "${shapeit4_job_dependencies[@]}" | tr ' ' ':') \
         --kill-on-invalid-dep=yes \
         --job-name=${sample}-shapeit4 \
+        --mail-user=$email \
+        -p $partition \
         $scripts_dir/5_run_shapeit4.slurm \
         $sample \
         $shapeit4_working_dir \
@@ -367,6 +412,8 @@ align_sim_fastq_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$simulator_job_id:$genotypingEr_filter_job2_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-simulation-alignment \
+    --mail-user=$email \
+    -p $partition \
     --mem=120G \
     -c 6 \
     $scripts_dir/2__star_alignment.slurm \
@@ -385,6 +432,8 @@ mpileup_sim_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$align_sim_fastq_job_id:$hetSNP_job_id \
     --kill-on-invalid-dep=yes \
     --job-name=${sample}-simulation-mpileup \
+    --mail-user=$email \
+    -p $partition \
     $scripts_dir/3_samtools_mpileup.slurm \
     $sample $simulation_dir $simulation_dir/mpileup $hetSNP $simulation_bam $simulation_pileup $ref_fasta \
     )

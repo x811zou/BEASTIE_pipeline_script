@@ -38,6 +38,7 @@ input_vcfgz=$2
 tmp_dir=$3
 bi_vcfgz=$4
 bihet_vcfgz=$5
+pass=$6
 
 threads=$SLURM_CPUS_ON_NODE
 
@@ -55,22 +56,28 @@ now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} :"${now}
 
 mkdir -p $tmp_dir
-bgzip -@ $threads -cd $input_vcfgz \
-    | grep -v '^#' \
-    | awk -v OFS='\t' 'sub(/:.*/,"",$10)  && length($4)==1 && length($5)==1 && $7=="PASS" && ($10=="1/0" || $10== "0/1" || $10=="1|0" || $10=="0|1")' \
-    | awk '{gsub(/\chr/, "")}1' \
-    > $tmp_dir/tmp.content.vcf
-#wc -l $output_dir/tmp.content.vcf.gz
-zcat $input_vcfgz | grep '^#' > $tmp_dir/tmp.header.vcf
-cat $tmp_dir/tmp.header.vcf $tmp_dir/tmp.content.vcf > $tmp_dir/${sample}.no_chr.content.SNPs.hets.vcf
-######################################### zip & index VCF
-bgzip -@2 -c -f $tmp_dir/${sample}.no_chr.content.SNPs.hets.vcf > $bihet_vcfgz && tabix -fp vcf $bihet_vcfgz
+
+if [[ "$pass" = true ]]; then
+    bgzip -@ $threads -cd $input_vcfgz \
+        | grep -v '^#' \
+        | awk -v OFS='\t' 'sub(/:.*/,"",$10)  && length($4)==1 && length($5)==1 && $7=="PASS" && ($10=="1/0" || $10== "0/1" || $10=="1|0" || $10=="0|1")' \
+        | awk '{gsub(/\chr/, "")}1' \
+        > $tmp_dir/tmp.content.vcf
+    #wc -l $output_dir/tmp.content.vcf.gz
+    zcat $input_vcfgz | grep '^#' > $tmp_dir/tmp.header.vcf
+    cat $tmp_dir/tmp.header.vcf $tmp_dir/tmp.content.vcf > $tmp_dir/${sample}.no_chr.content.SNPs.hets.vcf
+    ######################################### zip & index VCF
+    bgzip -@2 -c -f $tmp_dir/${sample}.no_chr.content.SNPs.hets.vcf > $bihet_vcfgz && tabix -fp vcf $bihet_vcfgz
 
 
-bgzip -@ $threads -cd $input_vcfgz \
-    | grep -v '^#' \
-    | awk -v OFS='\t' 'sub(/:.*/,"",$10)  && length($4)==1 && length($5)==1 && $7=="PASS"' \
-    > $tmp_dir/tmp.content.all.vcf
+    bgzip -@ $threads -cd $input_vcfgz \
+        | grep -v '^#' \
+        | awk -v OFS='\t' 'sub(/:.*/,"",$10)  && length($4)==1 && length($5)==1 && $7=="PASS"' \
+        > $tmp_dir/tmp.content.all.vcf
+else
+    echo "needs code for filtering without PASS"
+fi
+
 #wc -l $output_dir/tmp.content.vcf.gz
 cat $tmp_dir/tmp.header.vcf $tmp_dir/tmp.content.all.vcf > $tmp_dir/${sample}.no_chr.content.SNPs.vcf
 ######################################### zip & index VCF

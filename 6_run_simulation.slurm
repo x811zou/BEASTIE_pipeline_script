@@ -76,6 +76,10 @@ echo "$seed" > $seed_file
 
 now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} simulation : "${now}
+# recommendation:
+# 8G for 1000 genome samples
+# 10G for 10G
+mem="16G"
 
 # II. loop through 22 chromosome
 jobs_ids=()
@@ -83,6 +87,7 @@ for N in {1..22}
 do
         job_id=$(sbatch --parsable \
             --job-name=${SLURM_JOB_NAME}-chr${N} \
+            --mem=$mem \
             $scripts_dir/6__run_simulation_chrom.slurm \
             $sample \
             $simulation_working_dir \

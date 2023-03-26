@@ -1,4 +1,36 @@
 
+function get_ancestry() {
+    local raw_fq_dir=$1
+
+    local ancestry_file=$raw_fq_dir/ancestry
+    if [ ! -e "$ancestry_file" ]; then
+        >&2 echo "Error ancestry file not found at ${ancestry_file}"
+        return 5
+    fi
+    local ancestry=$(cat $ancestry_file)
+    if [ -z "$ancestry" ]; then
+        >&2 echo "No ancestry data found in file ${ancestry_file}"
+        return 5
+    fi
+    echo "${ancestry}"
+}
+
+function get_sex() {
+    local raw_fq_dir=$1
+
+    local sex_file=$raw_fq_dir/sex
+    if [ ! -e "$sex_file" ]; then
+        >&2 echo "Error sex file not found at ${sex_file}"
+        return 5
+    fi
+    local sex=$(cat $sex_file)
+    if [ -z "$sex" ]; then
+        >&2 echo "No sex data found in file ${sex_file}"
+        return 5
+    fi
+    echo "${sex}"
+}
+
 function get_ancestry_1000genome() {
     local sample=$1
 
