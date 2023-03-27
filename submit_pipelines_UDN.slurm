@@ -67,6 +67,7 @@ function submit_and_wait_sample() {
         --fastq-read-length $read_length \
         --simulation-depth $simulation_depth \
         --email $email \
+        --noPASSfilter \
         --keep-tmp \
         --hardac \
     )
@@ -93,7 +94,7 @@ export -f wait_for_jobs
 ########### UDN
 #UDN042246_family=["UDN042246-P","UDN205393-F","UDN754343-M"]
 
-samples="UDN042246-P" # UDN205393-F UDN754343-M"
+samples="UDN205393-F"
 parallel \
     -j 1 \
     --delay 1 \
