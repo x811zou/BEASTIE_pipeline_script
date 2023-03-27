@@ -19,8 +19,9 @@ After you make your setup file: my_setup.sh (s.g.), use link to name it "setup.s
 ```
 ln -s my_setup.sh setup.sh
 ```
-##### i. customize your stetup.sh
-##### i. customize your stetup.sh
+##### i. customize your submission file
+Example submission files made for 1000 Genome samples, GIAB, GSD samples: submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm<br>
+
 F.Y.I.Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 ```
 --is-1000Genome    --> default: individual sample
