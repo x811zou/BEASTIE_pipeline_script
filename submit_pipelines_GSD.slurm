@@ -91,7 +91,8 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
-samples="123375 123667 125249 125260 122698 122687 122687_merged"
+# samples="123375" # 123667 125249 125260 122698 122687 122687_merged"
+samples="123667" # 125249 125260 122698 122687 122687_merged"
 parallel \
     -j 10 \
     --delay 1 \
