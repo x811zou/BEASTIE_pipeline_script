@@ -43,8 +43,8 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_mysample.slurm
 ```
 
 #### (3) Trial:
-You can always try out the existing script before customziing your sample! 
-This script now only specifies one sample from 1000 Genome, which will be fast to test out. PLease change output directory before executing! Thanks! 
+You can always try out the existing script before customziing your sample! <br>
+This below script now only specifies one sample from 1000 Genome, which will be fast to test out. PLease change output directory before executing! Thanks! 
 ```
 sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
 ```
