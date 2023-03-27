@@ -2,7 +2,7 @@
 #SBATCH --job-name=simulation
 #SBATCH --mail-user=xz195@duke.edu
 #SBATCH --mail-type=FAIL
-#SBATCH --mem=8G
+#SBATCH --mem=10G
 #SBATCH --time=12:00:00
 #SBATCH --output=log/%j.out
 #SBATCH --error=log/%j.out
