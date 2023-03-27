@@ -11,7 +11,8 @@ git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
 ```
 
 ### Running the Pipeline
-Step1: Data Preparation
+<br>
+Step1: Data Preparation<br>
 <br>
 Before running the pipeline, you need to customize the setup file and the submission file.
 
