@@ -21,7 +21,6 @@ fi
 scripts_dir=$(dirname "$script_path")
 
 source $scripts_dir/setup.sh
-source $scripts_dir/helpers.sh
 
 hostname 1>&2
 set -x
@@ -40,7 +39,7 @@ function submit_and_wait_sample() {
     read_length=75
     simulation_length=100
     working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample
-    raw_fq_dir=/datacommons/allenlab/scarlett/data/fastq/$sample
+    raw_fq_dir=/datacommons/allenlab/scarlett/data/fastq/1000Genome/$sample
     email=xue.zou@duke.edu
     partition=scavenger
 
@@ -51,13 +50,13 @@ function submit_and_wait_sample() {
     beastie_dir=$working_dir/beastie
     input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
     output_dir=$beastie_dir/runModel_phased_even${simulation_length}
-    input_simulation_pileup=$working_dir/${sample}.simulation_SNPs_even_${simulation_length}.pileup.gz
+    input_simulation_pileup=$working_dir/${sample}.simulation_even_${simulation_length}.pileup.gz
     filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
     input_shapeit2=$working_dir/${sample}.shapeit.tsv
     
     job_id=$(sbatch \
         --parsable \
-        --job-name=${sample}-${modelname}-${sigma} \
+        --job-name=${sample}-${ancestry}-${modelname}-sigma${sigma} \
         --mail-user=$email \
         -p $partition \
         $scripts_dir/BEASTIE_runModel.slurm \
@@ -69,7 +68,6 @@ function submit_and_wait_sample() {
 
 }
 export -f submit_and_wait_sample
-export -f get_ancestry
 export scripts_dir
 
 samples="HG00096"

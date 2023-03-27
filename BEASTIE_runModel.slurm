@@ -5,8 +5,8 @@
 #SBATCH --mem=8G
 #SBATCH --time=8:00:00
 #SBATCH -c 4 
-#SBATCH --output=log/%J.stdout
-#SBATCH --error=log/%J.stdout
+#SBATCH --output=log/%J.out
+#SBATCH --error=log/%J.out
 #SBATCH -p scavenger
 
 ##### testing commands

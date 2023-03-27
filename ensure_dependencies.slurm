@@ -2,7 +2,6 @@
 #SBATCH --get-user-env
 #SBATCH --out=log/ensure_dependencies-%j.out
 #SBATCH --error=log/ensure_dependencies-%j.out
-#SBATCH -p scavenger
 #SBATCH -c 1
 #SBATCH --mem=512M
 #SBATCH --time=00:05:00
