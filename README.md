@@ -40,7 +40,8 @@ To submit jobs, find a directory to submit your job, and create a "log" folder w
 cd $pipeline_working
 sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_mysample.slurm
 ```
-Step 2: Run BEASTIE Model<br><br>
+<br>
+Step 2: Run BEASTIE Model<br>
 
 After the data preparation is complete, use the input file to run the BEASTIE model.<br>
 #### Customize your submission file
