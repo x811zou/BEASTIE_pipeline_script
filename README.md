@@ -57,7 +57,7 @@ cd $pipeline_working
 sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_mysample.slurm
 ```
 
-### Trial:
+### Testing case on DCC:
 You can always try out the existing script before customizing your sample. The following script specifies only one sample from 1000 Genome, which will be fast to test out. Please change the output directory before executing: 
 ```
 sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
@@ -65,4 +65,15 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
 After this job finishes and success file generated, you can run step2 script: 
 ```
 sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_example.slurm
+```
+
+
+### Testing case on HARDAC:
+You can always try out the existing script before customizing your sample. The following script specifies only one sample from SPAG1, which will be fast to test out. Please change the output directory before executing: 
+```
+sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_SPAG1.slurm
+```
+After this job finishes and success file generated, you can run step2 script: 
+```
+sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_SPAG1.slurm
 ```
