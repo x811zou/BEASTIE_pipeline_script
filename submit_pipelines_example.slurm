@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-pipelines-1000Genome
+#SBATCH --job-name=submit-pipelines-HG00096
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -12,9 +12,7 @@
 
 ########### testing commands
 ### commands with a specific sample name
-# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines.slurm
-### commands with a specific ancestry
-# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines.slurm CEU
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines_example.slurm
 ###########
 
 ###########  1000 Genome samples
@@ -126,11 +124,10 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
+samples="HG00096"
 parallel \
-    -j 10 \
+    -j 1 \
     --delay 1 \
     -v --line-buffer \
     submit_and_wait_sample \
     ::: $samples
-
-#start 10 samples,submit each one after 1s of submitting the previous one
