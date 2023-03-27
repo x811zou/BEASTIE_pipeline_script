@@ -20,18 +20,19 @@ After you make your setup file: my_setup.sh (s.g.), use link to name it "setup.s
 ln -s my_setup.sh setup.sh
 ```
 ##### i. customize your submission file
+Submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc
 Example submission files made for 1000 Genome samples, GIAB, GSD samples: submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm<br>
 
 F.Y.I.Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 ```
---is-1000Genome    --> default: individual sample
---is-GIAB          --> default: other sample. Only GIAB sample will run shapeit4 phasing
+--is-1000Genome    --> default: individual sample has one vcf file. Only 1000 Genome samples have VCF files for each chromosome.
+--is-GIAB          --> default: assumes not running shapeit4. Only GIAB sample will run shapeit4 phasing
 --simulate-hetSNPs --> default: only mutate het SNPs (which is not recommended)
---keep-tmp         --> default: remove tmp directory
+--keep-tmp         --> default: remove tmp directory to save space.
 --random           --> default: even haplotype mode so that p = 0.5
---force            --> default: check success file
+--force            --> default: check success file, if it exists, then skip running the sample
 --noPASSfilter     --> default: there is PASS filter in VCF (SNPs will be filtered by quality score > 10 based on SPAG1 sample)
 --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, customize it in full_pipeline2.slurm)
---email            --> default: xz195@duke.edu. (Change it to your email address.)
+--email            --> default: xz195@duke.edu. (Please change it to your email address.)
 ```
 #### (3) Instructions to run step2 pipeline scripts:
