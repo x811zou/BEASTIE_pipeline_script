@@ -8,12 +8,12 @@ step2: run BEASTIE model --> use input file to run BEASTIE model
 find a path that you want to store the pipeline scripts: code_path (e.g.)
 ```
 cd $code_path
-git clone 
+git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
 ```
 
 (2) Instructions to run step1 pipeline scripts:
 
-### Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
+Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 # --is-1000Genome    --> default: individual sample
 # --is-GIAB          --> default: other sample. Only GIAB sample will run shapeit4 phasing
 # --simulate-hetSNPs --> default: only mutate het SNPs (which is not recommended)
