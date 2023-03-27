@@ -46,6 +46,7 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_mysample.slurm
 Step 2: Run BEASTIE Model<br>
 <br>
 After the data preparation is complete, use the input file to run the BEASTIE model.<br>
+
 #### Customize your submission file
 The BEASTIE model submission file contains parameters that you set for your sample, such as regions of chromosomes you want to cover, and the parameters you choose in step1 submission file. Create your own submission file based on examples, for example, submit_BEASTIE_runModel_single_mysample.slurm <br><br>
 
