@@ -22,7 +22,7 @@ ln -s my_setup.sh setup.sh
 ##### i. customize your submission file
 Submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc
 Example submission files made for 1000 Genome samples, GIAB, GSD samples: submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm<br>
-
+After reviewing the parameter options, create your own submission file based on examples: submit_pipelines_mysample.slurm (e.g.)
 F.Y.I.Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 ```
 --is-1000Genome    --> default: individual sample has one vcf file. Only 1000 Genome samples have VCF files for each chromosome.
@@ -33,6 +33,18 @@ F.Y.I.Please check carefully for your sample. If you have question, please email
 --force            --> default: check success file, if it exists, then skip running the sample
 --noPASSfilter     --> default: there is PASS filter in VCF (SNPs will be filtered by quality score > 10 based on SPAG1 sample)
 --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, customize it in full_pipeline2.slurm)
---email            --> default: xz195@duke.edu. (Please change it to your email address.)
+--email            --> default: xue.zou@duke.edu. (Please change it to your email address.)
 ```
-#### (3) Instructions to run step2 pipeline scripts:
+##### i. Submit jobs:
+Please find a directory to submit your job, and create a "log" folder where you could retrieve your log file for debugging purpose: pipeline_work (e.g.)
+```
+cd $pipeline_working
+sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_mysample.slurm
+```
+
+#### (4) Trial:
+You can always try out the existing script before customziing your sample! 
+This script now only specifies one sample from 1000 Genome, which will be fast to test out. PLease change output directory before executing! Thanks! 
+```
+sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
+```
