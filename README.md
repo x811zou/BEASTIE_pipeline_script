@@ -4,7 +4,7 @@ This repository contains pipeline script for running BEASTIE on duke DCC/hardac 
 step1: data preparation  --> generates files needed to run BEASTIE <br>
 step2: run BEASTIE model --> use input file to run BEASTIE model
 
-(1) Get code to your directory:
+##### (1) Get code to your directory:
 find a path that you want to store the pipeline scripts: code_path (e.g.)
 ```
 cd $code_path
