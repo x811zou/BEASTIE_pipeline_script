@@ -14,12 +14,12 @@ git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
 Step1: Data Preparation<br><br>
 Before running the pipeline, you need to customize the setup file and the submission file.
 
-#### customize your setup file
+#### Customize your setup file
 The setup file contains all reference paths that are necessary for the bioinformatics software used in the pipeline. It is important to customize your own version if you want to use your own preferred reference/annotation files. Example setup files made from Allen Lab used for DCC and Hardac are DCC_setup.sh and hardac_setup.sh. After you make your setup file my_setup.sh (for example), use the following command to name it "setup.sh":
 ```
 ln -s my_setup.sh setup.sh
 ```
-#### customize your submission file
+#### Customize your submission file
 The submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc. Example submission files made for 1000 Genome samples, GIAB, GSD samples are submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm. After reviewing the parameter options, create your own submission file based on examples, for example, submit_pipelines_mysample.slurm.<br><br>
 
 Please check the options carefully for your sample. If you have any questions, please email xue.zou@duke.edu.
@@ -47,4 +47,8 @@ After the data preparation is complete, use the input file to run the BEASTIE mo
 You can always try out the existing script before customizing your sample. The following script specifies only one sample from 1000 Genome, which will be fast to test out. Please change the output directory before executing: 
 ```
 sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
+```
+After this job finishes and success file generated, you can run step2 script: 
+```
+
 ```
