@@ -4,14 +4,14 @@ This repository contains pipeline script for running BEASTIE on duke DCC/hardac 
 step1: data preparation  --> generates files needed to run BEASTIE <br>
 step2: run BEASTIE model --> use input file to run BEASTIE model
 
-##### (1) Get code to your directory:
+#### (1) Get code to your directory:
 find a path that you want to store the pipeline scripts: code_path (e.g.)
 ```
 cd $code_path
 git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
 ```
 
-(2) Instructions to run step1 pipeline scripts:
+#### (2) Instructions to run step1 pipeline scripts:
 i. customize your stetup.sh
 F.Y.I.Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 ```
@@ -25,4 +25,4 @@ F.Y.I.Please check carefully for your sample. If you have question, please email
 --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, customize it in full_pipeline2.slurm)
 --email            --> default: xz195@duke.edu. (Change it to your email address.)
 ```
-(3) Instructions to run step2 pipeline scripts:
+#### (3) Instructions to run step2 pipeline scripts:
