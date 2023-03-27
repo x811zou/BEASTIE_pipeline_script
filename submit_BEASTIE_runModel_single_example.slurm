@@ -4,6 +4,7 @@
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
 #SBATCH --oversubscribe
+#SBATCH -p scavenger
 #SBATCH --no-requeue
 #SBATCH --dependency=singleton
 #SBATCH --out=log/%j.out
@@ -33,7 +34,7 @@ function submit_and_wait_sample() {
     source $scripts_dir/setup.sh
     source $scripts_dir/helpers.sh
 
-    ### Please change here for your sample: GIAB
+    ### Please change here for your sample: HG00096
     chr_start=1
     chr_end=22
     read_length=75

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-BEASTIE-GIAB
+#SBATCH --job-name=submit-BEASTIE
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -10,6 +10,16 @@
 #SBATCH --out=log/%j.out
 #SBATCH --error=log/%j.out
 
+########### testing commands
+## GIAB/GSD
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm
+## 1000 Genome
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm YRI
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm CEU
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm GBR
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm FIN
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single.slurm TSI
+###########
 
 if [ -n "$SLURM_JOB_ID" ] ; then
     script_path=$(realpath $(scontrol show job $SLURM_JOBID | awk -F= '/Command=/{print $2}' | cut -d' ' -f1 ))
@@ -25,18 +35,7 @@ hostname 1>&2
 set -e
 set -u
 
-########### testing commands
-# sbatch ../script/RNAseq-analysis/pipeline_scripts2/submit_BEASTIE_runModel_single.slurm
-###########
 ancestry=${1-}
-###########  1000 Genome samples
-#file=$path/British.txt GBR #188/2=94 #8-86-86 HG00104 HG00124 HG00134 HG00135 HG00152 HG00156 HG00247 HG00249
-#file=$path/Finnish.txt FIN #190/2=95 #3-92-92 HG00312 HG00359 HG00377
-#file=$path/Tuscan.txt  TSI #186/2=93 #2-91-91 NA20537 NA20816
-#file=$path/Utah.txt    CEU #182/2=91 #2-89-89 NA11993 NA07346
-#file=$path/Yoruba.txt  YRI #178/2=89 #2-87-87 NA18487 NA19150
-# 94+95+93+91+89 = 465 - (9+3+3+2+2) = 445 | 445
-
 ancestry_arg=""
 if [ -n "$ancestry" ]; then
     ancestry_arg=$ancestry
@@ -48,33 +47,15 @@ if [ -n "$ancestry" ]; then
     samples=$(cat ${file} | awk '{print $1}' | uniq | tail -n+${start} | head -n $count)
 fi
 
-function get_ancestry() {
-    local raw_fq_dir=$1
-
-    local ancestry_file=$raw_fq_dir/ancestry
-    if [ ! -e "$ancestry_file" ]; then
-        >&2 echo "Error ancestry file not found at ${ancestry_file}"
-        return 5
-    fi
-    local ancestry=$(cat $ancestry_file)
-    if [ -z "$ancestry" ]; then
-        >&2 echo "No ancestry data found in file ${ancestry_file}"
-        return 5
-    fi
-    echo "${ancestry}"
-}
-
-
 function submit_and_wait_sample() {
     sample=$1
 
     source $scripts_dir/setup.sh
     source $scripts_dir/helpers.sh
-
+    GSD_list=("123375" "123667" "125249" "125260" "122687_merged" "122698")
     echo "submitting pipeline for $sample"
 
-    if [ "$sample" = "NA12878" ];
-    then
+    if [[ "$sample" = "NA12878" ]];then
         postfix="GIAB"
         echo ">>> GIAB sample!"
         ### GIAB
@@ -82,6 +63,14 @@ function submit_and_wait_sample() {
         raw_fq_dir=/datacommons/allenlab/scarlett/data/fastq/$sample
         read_length=101
         simulation_depth=101
+    elif [[ " ${GSD_list[*]} " == *" $sample "* ]]; then
+        postfix="GSD"
+        echo "$sample is present in the GSD list"
+        ### GSD
+        base_working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GSD
+        raw_fq_dir=/datacommons/allenlab/scarlett/data/GSD/ShortReadRNA/$sample
+        read_length=50
+        simulation_depth=100    
     else
         postfix="1000Genome"
         echo ">>> 1000 genome sample!"
@@ -109,8 +98,8 @@ function submit_and_wait_sample() {
     all_job_ids=()
     job_id=$(sbatch \
         --parsable \
-        --job-name=${ancestry}-${sample}-${modelname}-${sigma1} \
-        /hpc/group/allenlab/scarlett/script/RNAseq-analysis/pipeline_scripts2/BEASTIE_runModel.slurm \
+        --job-name=${sample}-${ancestry}-${modelname}-${sigma1} \
+        $scripts_dir/BEASTIE_runModel.slurm \
         $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma1 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
     )
     all_job_ids+=( $job_id )
@@ -118,8 +107,8 @@ function submit_and_wait_sample() {
         --parsable \
         --dependency=singleton,afterok:$job_id \
         --kill-on-invalid-dep=yes \
-        --job-name=${ancestry}-${sample}-${modelname}-${sigma2} \
-        /hpc/group/allenlab/scarlett/script/RNAseq-analysis/pipeline_scripts2/BEASTIE_runModel.slurm \
+        --job-name=${sample}-${ancestry}-${modelname}-${sigma2} \
+        $scripts_dir/BEASTIE_runModel.slurm \
         $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma2 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
     )
     all_job_ids+=( $job_id2 )
@@ -129,11 +118,22 @@ function submit_and_wait_sample() {
     echo "finished $sample"
 
 }
+
 export -f submit_and_wait_sample
 export -f get_ancestry
 export scripts_dir
-samples="NA12878"
 
+### Please change here for your sample: HG00096
+# samples="NA12878"
+# parallel \
+#     -j 1 \
+#     --delay 1 \
+#     -v --line-buffer \
+#     submit_and_wait_sample \
+#     ::: $samples
+
+### Please change here for your sample: GSD
+samples="123375"
 parallel \
     -j 1 \
     --delay 1 \
@@ -141,4 +141,10 @@ parallel \
     submit_and_wait_sample \
     ::: $samples
 
-#start 20 samples,submit each one after 1s of submitting the previous one
+### Please change here for your sample from 1000 Genome
+# parallel \
+#     -j 5 \
+#     --delay 1 \
+#     -v --line-buffer \
+#     submit_and_wait_sample \
+#     ::: $samples
