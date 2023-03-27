@@ -29,7 +29,7 @@ set -u
 bam=$1
 out_sam=$2
 
-out_sam_index=$out_sam.tbi
+out_sam_index=${out_sam}.tbi
 
 if [ -s "$out_sam" \
     -a -s "$out_sam_index" \

@@ -33,7 +33,6 @@ Trimmomatic_path=$1
 sample=$2
 rawfastq_fwd=$3
 rawfastq_rev=$4
-
 trimmedfastq_dir=$5
 
 # check 

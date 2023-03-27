@@ -48,6 +48,7 @@ simulate_allSNPs=true
 is_1000Genome=false
 is_GIAB=false
 partition="scavenger"
+highcoverage=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -63,6 +64,7 @@ while [[ "$#" -gt 0 ]]; do
         --sex) sex="$2"; shift ;;
         --email) email="$2"; shift ;;
         --noPASSfilter) pass=false ;;
+        --highcoverage) highcoverage=true ;;
         --simulate-hets-only) simulate_allSNPs=false ;;
         --is-1000Genome) is_1000Genome=true ;;
         --is-GIAB) is_GIAB=true ;;
@@ -167,9 +169,8 @@ sex_file=$working_dir/sex
 echo "$sex" > $sex_file
 
 all_job_ids=()
-
-
-# if not filtered and not unfiltered
+######################################################################################################
+# step0: extract VCF                       (parallel to step1)
 modify_haplotype_job_id=""
 shapeit2_working_dir=$tmp_dir/shapeit2
 shapeit4_working_dir=$tmp_dir/shapeit4
@@ -218,19 +219,19 @@ else
 fi
 all_job_ids+=( $extract_vcf_job_id )
 
-
 # step1: trim fastq reads
 trim_real_fastq_job_id=$(sbatch --parsable \
     --job-name=${sample}-trimFastq \
     --dependency=singleton \
     --mail-user=$email \
     -p $partition \
+    --mem=$step1_mem \
     $scripts_dir/1_trim_fastq.slurm \
     $Trimmomatic \
     $sample $raw_fq_fwd $raw_fq_rev \
     $trimmedfastq_dir)
-all_job_ids+=( $trim_real_fastq_job_id )
 
+all_job_ids+=( $trim_real_fastq_job_id )
 # step2: align trimmed fastq reads and then mark duplicates & WASP filtering      (depend on step1)
 star_working_dir=$tmp_dir/star_2pass_WASP_m${mismatchN}
 star_out_file=$star_working_dir/$star_bam_filename
@@ -240,6 +241,7 @@ align_real_fastq_job_id=$(sbatch --parsable \
     --job-name=${sample}-alignment \
     --mail-user=$email \
     -p $partition \
+    --mem=$step2_mem \
     $scripts_dir/2__star_alignment.slurm \
     $sample \
     $ref $star_ind $AnnoDir $mismatchN \
@@ -346,7 +348,7 @@ genotypingEr_filter_job2_id=$(sbatch --parsable \
     )
 all_job_ids+=( $genotypingEr_filter_job2_id )
 
-# step6: simulating fastq reads
+# step5: simulating fastq reads
 simulator_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$markDuplicates_waspFilter_job_id:$genotypingEr_filter_job2_id:$simulator_sam_job_id \
     --kill-on-invalid-dep=yes \
@@ -358,7 +360,7 @@ simulator_job_id=$(sbatch --parsable \
     $simulation_fwd_fastq \
     $simulation_rev_fastq \
     $simulation_dir \
-    $util_dir $genome $gff \
+    $util_dir $genome_2bit $gff \
     $real_sam \
     $simulation_vcfgz \
     $simulation_depth \
@@ -368,7 +370,7 @@ simulator_job_id=$(sbatch --parsable \
     )
 all_job_ids+=( $simulator_job_id )
 
-# step5: shapeit2 phasing
+# step6: shapeit2 phasing
 shapeit2_ref_sample=$shapeit2_haplotype_dir/$shapeit2_ref_sample_name
 shapeit2_job_dependencies=($modify_haplotype_job_id $genotypingEr_filter_job2_id)
 shapeit2_phasing_job_id=$(sbatch --parsable \
@@ -414,7 +416,7 @@ align_sim_fastq_job_id=$(sbatch --parsable \
     --job-name=${sample}-simulation-alignment \
     --mail-user=$email \
     -p $partition \
-    --mem=120G \
+    --mem=$step7_mem \
     -c 6 \
     $scripts_dir/2__star_alignment.slurm \
     $sample \

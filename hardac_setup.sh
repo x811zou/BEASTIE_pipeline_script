@@ -14,7 +14,7 @@ star_ind=/data/reddylab/scarlett/reference/STARIndex
 mismatchN=10
 AnnoDir=$ref/annotations
 shapeit2_ref_dir=/data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3
-shapeit2_ref_sample=$shapeit2_ref_dir/1000GP_Phase3.sample
+shapeit2_ref_sample_name=1000GP_Phase3.sample
 util_dir=/data/reddylab/scarlett/reference/twobit
 genome_2bit=$util_dir/hg19.2bit
 ref_fasta=/data/allenlab/scarlett/data/reference/hg19/hg19.fa
@@ -26,7 +26,6 @@ min_total=1
 min_single=0
 
 # run_dir=/hpc/group/allenlab/scarlett/pipeline_working/run
-
 beastie_singularity_image=/data/allenlab/scarlett/BEASTIE-2023-02-21T08:03:20-0500.sif
 singularity_mount_paths=( /data/reddylab/scarlett /data/allenlab/scarlett)
 
@@ -38,3 +37,8 @@ star_bam_filename=Aligned.sortedByCoord.out.bam
 
 # useful variables
 threads=$SLURM_CPUS_ON_NODE
+
+# memory usage
+step1_mem=64G
+step2_mem=128G
+step7_mem=150G
