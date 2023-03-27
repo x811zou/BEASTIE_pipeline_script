@@ -68,7 +68,6 @@ function submit_and_wait_sample() {
         --fastq-read-length $read_length \
         --simulation-depth $simulation_depth \
         --email $email \
-        --highcoverage \
         --keep-tmp \
         --hardac \
     )

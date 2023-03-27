@@ -48,7 +48,6 @@ simulate_allSNPs=true
 is_1000Genome=false
 is_GIAB=false
 partition="scavenger"
-highcoverage=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -64,7 +63,6 @@ while [[ "$#" -gt 0 ]]; do
         --sex) sex="$2"; shift ;;
         --email) email="$2"; shift ;;
         --noPASSfilter) pass=false ;;
-        --highcoverage) highcoverage=true ;;
         --simulate-hets-only) simulate_allSNPs=false ;;
         --is-1000Genome) is_1000Genome=true ;;
         --is-GIAB) is_GIAB=true ;;
