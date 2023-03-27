@@ -12,6 +12,10 @@ git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
 ```
 
 #### (2) Instructions to run step1 pipeline scripts:
+##### i. customize your setup file
+setup file contains all reference paths that are necessary for the bioinformatics softwares used in the pipeline. It is important to customize your own version if you want to use your own preferred reference/annotation files.<br>
+Example setup files made from allenlab used for DCC and Hardac are: DCC_setup.sh and hardac_setup.sh
+##### i. customize your stetup.sh
 ##### i. customize your stetup.sh
 F.Y.I.Please check carefully for your sample. If you have question, please email xue.zou@duke.edu
 ```
