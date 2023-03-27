@@ -42,7 +42,17 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_mysample.slurm
 ```
 Step 2: Run BEASTIE Model<br><br>
 
-After the data preparation is complete, use the input file to run the BEASTIE model.
+After the data preparation is complete, use the input file to run the BEASTIE model.<br>
+#### Customize your submission file
+The BEASTIE model submission file contains parameters that you set for your sample, such as regions of chromosomes you want to cover, and the parameters you choose in step1 submission file. Create your own submission file based on examples, for example, submit_BEASTIE_runModel_single_mysample.slurm <br><br>
+
+#### Submit jobs:
+Use the same directory to submit this job:
+```
+cd $pipeline_working
+sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_mysample.slurm
+```
+
 ### Trial:
 You can always try out the existing script before customizing your sample. The following script specifies only one sample from 1000 Genome, which will be fast to test out. Please change the output directory before executing: 
 ```
@@ -50,5 +60,5 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_pipelines_example.slurm
 ```
 After this job finishes and success file generated, you can run step2 script: 
 ```
-
+sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_example.slurm
 ```
