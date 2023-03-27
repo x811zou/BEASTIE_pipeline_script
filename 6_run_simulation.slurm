@@ -78,8 +78,8 @@ now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} simulation : "${now}
 # recommendation:
 # 8G for 1000 genome samples
-# 10G for 10G
-mem="16G"
+# 9G for GSD samples
+mem="9G"
 
 # II. loop through 22 chromosome
 jobs_ids=()

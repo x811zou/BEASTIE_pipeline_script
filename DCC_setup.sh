@@ -22,6 +22,7 @@ mismatchN=10
 AnnoDir=/datacommons/allenlab/scarlett/reference/hg19/annotations
 shapeit2_ref_dir=/datacommons/allenlab/scarlett/reference/shapeit2/1000GP_Phase3/1000GP_Phase3
 shapeit2_ref_sample_name=1000GP_Phase3.sample
+shapeit4_ref_sample_name=1000GP_Phase3.sample
 shapeit4_ref_dir=/datacommons/allenlab/scarlett/reference/shapeit4/reference/all
 util_dir=/datacommons/allenlab/scarlett/reference/twobit
 genome=/datacommons/allenlab/scarlett/reference/hg19/hg19.2bit

@@ -36,7 +36,7 @@ function submit_and_wait_sample() {
     source $scripts_dir/helpers.sh
     echo "submitting pipeline for $sample"
 
-    ### Please change here for your sample: GIAB
+    ### Please change here for your sample: GSD
     postfix="GSD"
     echo ">>> $postfix sample!"
     working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample
@@ -50,18 +50,9 @@ function submit_and_wait_sample() {
 
     ### Please do not change below this line
     success_file=$working_dir/success
-    if [[ -s $success_file ]]; then
-        echo "found success file $success_file"
-        if [ -d "$working_dir/tmp" ]; then
-            echo "tmp dir still exists"
-            rmdir $working_dir/tmp
-        fi
-            echo "tmp dir not exists"
-        return 0
-    fi
     ancestry=$(get_ancestry $raw_fq_dir)
     sex=$(get_sex $raw_fq_dir)
-    
+
     job_id=$(sbatch \
         --parsable \
         --job-name=${sample}-${ancestry}-pipeline-${postfix} \
@@ -100,8 +91,7 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
-samples="123375"
-#samples="123375 123667 125249 125260 122687_merged 122698"
+samples="123375 123667 125249 125260 122687_merged 122698"
 parallel \
     -j 1 \
     --delay 1 \

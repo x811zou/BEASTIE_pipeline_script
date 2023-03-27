@@ -47,7 +47,7 @@ mkdir -p $tmp_out_dir
 
 # I. create modified reference sample/haplotype
 ref_sample=$tmp_out_dir/sample.file
-# zcat /datacommons/allenlab/scarlett/reference/shapeit4/reference/all/chr21.vcf.gz | grep -v "^##" | head -n 1  > $ref_sample
+zcat $ref_dir/chr21.vcf.gz | grep -v "^##" | head -n 1  > $ref_sample
 # II. create modified sample: extract the line with sample from 1000 genome reference panel 2505 individuals, remove this line from sample file
 index=$(awk -F'\t' '{for (i=1; i<=NF; i++) if ($i == "'$sample'") print i}' ${ref_sample})
 

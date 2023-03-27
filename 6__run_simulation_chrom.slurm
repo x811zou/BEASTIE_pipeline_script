@@ -26,7 +26,7 @@ set -u
 # module load htslib
 # module load samtools/1.11-rhel8
 ######### 1000 Genome individuals
-# N=1
+# N=16
 # sample="HG00096"
 # util_dir=/hpc/home/bmajoros/twobit
 # genome=/datacommons/allenlab/hg19/hg19.2bit
@@ -39,12 +39,12 @@ set -u
 # sample="123375"
 # sam=/hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_SNPs_even_100/${sample}.sam.gz
 # vcfgz=/hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/${sample}.no_chr.content.SNPs.filtered.vcf.gz
-# out_path=/hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_test
-# read_depth=1
+# out_path=/hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_even_100
+# read_depth=100
 #
 # EXAMPLE running command:
-# python /hpc/group/allenlab/scarlett/script/spliced_simulator/unbiased-spliced-rna-test.py $util_dir $genome $gff $sam $vcfgz $out_path $read_depth --out-prefix chr${N} --chr chr${N} --allSNPs
-# srun -c 4 --mem=32G ../script/RNAseq-analysis/pipeline_scripts/6__run_simulation_chrom.slurm $sample /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_test /hpc/home/bmajoros/twobit /datacommons/allenlab/hg19/hg19.2bit /datacommons/allenlab/hg19/filter/gencode.v19.annotation.level12.gtf /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_SNPs_even_100/${sample}.sam.gz /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/${sample}.no_chr.content.SNPs.filtered.vcf.gz 1 1 1234 SNPs even
+# python /hpc/group/allenlab/scarlett/github/spliced_simulator/unbiased-spliced-rna-test.py $util_dir $genome $gff $sam $vcfgz $out_path $read_depth --out-prefix chr${N} --chr chr${N} --allSNPs
+# srun -c 4 --mem=32G /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/6__run_simulation_chrom.slurm $sample /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_test /hpc/home/bmajoros/twobit /datacommons/allenlab/hg19/hg19.2bit /datacommons/allenlab/hg19/filter/gencode.v19.annotation.level12.gtf /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/tmp/simulation_SNPs_even_100/${sample}.sam.gz /hpc/group/allenlab/scarlett/output/RNAseq/GSD/$sample/${sample}.no_chr.content.SNPs.filtered.vcf.gz 1 1 1234 SNPs even
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then
