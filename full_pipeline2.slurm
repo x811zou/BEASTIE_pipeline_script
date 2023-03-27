@@ -367,6 +367,7 @@ simulator_job_id=$(sbatch --parsable \
     $seed_file \
     $simulate_allSNPs \
     $simulation_haplotype_mode \
+    $step6_mem \
     )
 all_job_ids+=( $simulator_job_id )
 

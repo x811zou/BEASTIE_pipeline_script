@@ -55,6 +55,7 @@ depth=${10}
 seed_file=${11}
 simulate_allSNPs=${12}
 haplotype=${13}
+mem=${14}
 
 ####################### run simulation
 
@@ -76,10 +77,6 @@ echo "$seed" > $seed_file
 
 now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} simulation : "${now}
-# recommendation:
-# 8G for 1000 genome samples
-# 9G for GSD samples
-mem="9G"
 
 # II. loop through 22 chromosome
 jobs_ids=()

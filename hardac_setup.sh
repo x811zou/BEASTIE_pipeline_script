@@ -41,4 +41,5 @@ threads=$SLURM_CPUS_ON_NODE
 # memory usage
 step1_mem=64G
 step2_mem=128G
+step6_mem=15G
 step7_mem=150G
