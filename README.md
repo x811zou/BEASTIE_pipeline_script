@@ -1,7 +1,7 @@
 # BEASTIE_pipeline_script
 This repository contains pipeline script for running BEASTIE on duke DCC/hardac cluster:
 
-step1: data preparation  --> generates files needed to run BEASTIE 
+step1: data preparation  --> generates files needed to run BEASTIE <br>
 step2: run BEASTIE model --> use input file to run BEASTIE model
 
 (1) Get code to your directory:
