@@ -3,11 +3,12 @@ This repository contains a pipeline script for running BEASTIE on the Duke DCC/H
 
 ## Getting Started
 ### Installation
-To get started, clone this repository to a directory of your choice:
+To get started, clone this repository to a directory of your choice, and create the "beastie" environment using the YAML file:
 
 ```
 cd $code_path
 git clone https://github.com/x811zou/BEASTIE_pipeline_script.git
+conda env create -f environment.yml
 ```
 
 ### Running the Pipeline
