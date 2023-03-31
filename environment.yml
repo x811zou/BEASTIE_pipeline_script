@@ -2,7 +2,6 @@ name: beastie
 channels:
   - bioconda
   - r
-  - bioconda/linux-64
   - conda-forge
   - defaults
 dependencies:
