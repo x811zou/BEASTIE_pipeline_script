@@ -23,7 +23,7 @@ The setup file contains all reference paths that are necessary for the bioinform
 ln -s my_setup.sh setup.sh
 ```
 #### Customize your submission file
-The submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc. After reviewing the parameter options, create your own submission file, for example, **submit_pipelines_mysample.slurm**,based on the template: __submit_pipelines_template.slurm__. Example submission files made for 1000 Genome samples, GIAB, GSD samples are _submit_pipelines_GIAB.slurm_, _submit_pipelines_GSD.slurm_, _submit_pipelines_GIAB.slurm_. <br><br>
+The submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc. After reviewing the parameter options, create your own submission file, for example, **submit_pipelines_mysample.slurm**,based on the template: _submit_pipelines_template.slurm_. Example submission files made for 1000 Genome samples, GIAB, GSD samples are _submit_pipelines_GIAB.slurm_, _submit_pipelines_GSD.slurm_, _submit_pipelines_GIAB.slurm_. <br><br>
 
 Please check the options carefully for your sample. If you have any questions, please email xue.zou@duke.edu.
 ```
