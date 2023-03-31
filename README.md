@@ -18,12 +18,12 @@ Step1: Data Preparation<br>
 Before running the pipeline, you need to customize the setup file and the submission file.
 
 #### Customize your setup file
-The setup file contains all reference paths that are necessary for the bioinformatics software used in the pipeline. It is important to customize your own version if you want to use your own preferred reference/annotation files. Example setup files made from Allen Lab used for DCC and Hardac are DCC_setup.sh and hardac_setup.sh. After you make your setup file my_setup.sh (for example), use the following command to name it "setup.sh":
+The setup file contains all reference paths that are necessary for the bioinformatics software used in the pipeline. It is important to customize your own version if you want to use your own preferred reference/annotation files. Example setup files made from Allen Lab used for DCC and Hardac are DCC_setup.sh and hardac_setup.sh. After you make your setup file **my_setup.sh** (for example), use the following command to name it "setup.sh":
 ```
 ln -s my_setup.sh setup.sh
 ```
 #### Customize your submission file
-The submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc. Example submission files made for 1000 Genome samples, GIAB, GSD samples are submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm. After reviewing the parameter options, create your own submission file based on examples, for example, submit_pipelines_mysample.slurm.<br><br>
+The submission file contains parameters that you set for your sample, such as input/output paths, features of VCF file, setting for the fastq simulation, email to receive job information, etc. After reviewing the parameter options, create your own submission file, for example, **submit_pipelines_mysample.slurm**,based on the template: **submit_pipelines_template.slurm** Example submission files made for 1000 Genome samples, GIAB, GSD samples are submit_pipelines_GIAB.slurm, submit_pipelines_GSD.slurm, submit_pipelines_GIAB.slurm. <br><br>
 
 Please check the options carefully for your sample. If you have any questions, please email xue.zou@duke.edu.
 ```
