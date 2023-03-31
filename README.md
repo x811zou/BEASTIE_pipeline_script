@@ -81,3 +81,5 @@ sbatch $code_path/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_SPAG1.s
 <span style="color: blue">This text will be blue</span>
 This <span style="color: blue; font-weight: bold">word</span> will be blue and bold.
 This **word** will be bold, and this _word_ will be italic.
+This is a <span style="color: blue;">blue</span> word.
+This is a <font color="blue">blue</font> word.
