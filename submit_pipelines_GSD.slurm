@@ -50,7 +50,7 @@ function submit_and_wait_sample() {
 
     ### Please do not change below this line
     success_file=$working_dir/success
-    ancestry=$(get_ancestry $raw_fq_dir)
+    ancestry="EUR"
     sex=$(get_sex $raw_fq_dir)
 
     job_id=$(sbatch \
