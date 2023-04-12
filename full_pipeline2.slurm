@@ -401,6 +401,7 @@ if [[ "$is_GIAB" = true ]]; then
         $scripts_dir/5_run_shapeit4.slurm \
         $sample \
         $shapeit4_working_dir \
+        $tmp_dir/VCF/tmp.header.vcf \
         $filtered_bihet_vcfgz \
         $shapeit4 \
         $shapeit4_haplotype_dir \
