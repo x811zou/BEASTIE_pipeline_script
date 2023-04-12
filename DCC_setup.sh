@@ -49,7 +49,7 @@ threads=$SLURM_CPUS_ON_NODE
 
 # memory usage
 step1_mem=16G
-step2_mem=70G
+step2_mem=100G
 step6_mem=10G
 # recommendation:
 # 8G for 1000 genome samples
