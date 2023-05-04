@@ -38,8 +38,12 @@ star_bam_filename=Aligned.sortedByCoord.out.bam
 # useful variables
 threads=$SLURM_CPUS_ON_NODE
 
-# memory usage
-step1_mem=64G
+# memory usage suggested
+step1_mem=5G
 step2_mem=150G
 step6_mem=15G
 step7_mem=164G
+
+## SPAG1-original memory usage
+#step1_mem=5G
+#step2_mem=XG

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-pipelines-SPAG1
+#SBATCH --job-name=submit-pipelines-SPAG1-original
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -34,18 +34,20 @@ function submit_and_wait_sample() {
     source $scripts_dir/helpers.sh
     echo "submitting pipeline for $sample"
 
-    ### Please change here for your sample: GIAB
-    postfix="SPAG1"
+    postfix=$sample
     echo ">>> $postfix sample!"
-    ancestry="CEU"
+    ancestry="EUR" #GBR,TSI,FIN,CEU
     sex="female"
     base_working_dir=/data/reddylab/scarlett/output/
     vcf_dir=/data/cegs_ccgr/data/raw/wes_vcf/M2780_exome_calls.vcf.gz
+    ##### SPAG polyA (--noPASSfilter)
+    #raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-835516727
+    ##### SPAG original
     raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-803694728_mget/$sample
-    read_length=120
-    simulation_depth=120
-    raw_fq_fwd=$(ls $raw_fq_dir/*_R1_*.fastq.gz)
-    raw_fq_rev=$(ls $raw_fq_dir/*_R2_*.fastq.gz)
+    read_length=150
+    simulation_depth=150 #>=100
+    raw_fq_fwd=$(ls $raw_fq_dir/${postfix}*R1*fastq.gz)
+    raw_fq_rev=$(ls $raw_fq_dir/${postfix}*R2*fastq.gz)
     email=xz195@duke.edu
     partition=all
 
@@ -57,7 +59,7 @@ function submit_and_wait_sample() {
         --parsable \
         --job-name=${sample}-${ancestry}-pipeline \
         -p $partition \
-        $scripts_dir//full_pipeline2.slurm \
+        $scripts_dir/full_pipeline2.slurm \
         --sample $sample \
         --ancestry $ancestry \
         --sex $sex \
@@ -68,6 +70,7 @@ function submit_and_wait_sample() {
         --fastq-read-length $read_length \
         --simulation-depth $simulation_depth \
         --email $email \
+        --noPASSfilter \
         --keep-tmp \
         --hardac \
     )
@@ -91,7 +94,7 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
-samples="SPAG1-9806"
+samples="SPAG1-9806" #"SPAG1-9806_polyA"
 parallel \
     -j 1 \
     --delay 1 \

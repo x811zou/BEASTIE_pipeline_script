@@ -10,7 +10,11 @@
 #SBATCH --time=6:00:00
 
 ############### testing command
+#ref=/data/reddylab/scarlett/reference/hg19
+#star_ind=/data/reddylab/scarlett/reference/STARIndex
+#AnnoDir=$ref/annotations
 # sbatch ../script/RNAseq-analysis/pipeline_scripts/2__star_alignment.slurm NA12878 /datacommons/allenlab/scarlett/reference/hg19 /datacommons/allenlab/scarlett/reference/STARIndex /datacommons/allenlab/hg19/filter/gencode.v19.annotation.level12.gtf /hpc/group/allenlab/scarlett/output/RNAseq/for_verification/new/fastq /hpc/group/allenlab/scarlett/output/RNAseq/for_verification/new/star_2pass_WASP_m10 /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.no_chr.content.SNPs.filtered.vcf.gz 10 /hpc/group/allenlab/scarlett/output/RNAseq/for_verification/new/${sample}.chr21.pileup.gz
+# sbatch /data/allenlab/scarlett/github/BEASTIE_pipeline_script/2__star_alignment.slurm SPAG1-9806 $ref $star_ind $AnnoDir 10 /data/reddylab/scarlett/output/SPAG1-9806/SPAG1-9806.no_chr.content.SNPs.hets.vcf.gz /data/reddylab/scarlett/output/SPAG1-9806/tmp/trimmed_fastq/SPAG1-9806_FWD_paired.fq.gz /data/reddylab/scarlett/output/SPAG1-9806/tmp/trimmed_fastq/SPAG1-9806_REV_paired.fq.gz /data/reddylab/scarlett/output/SPAG1-9806/tmp/star_2pass_WASP_m10
 ###############
 
 # cmd to generate star index
@@ -29,7 +33,7 @@ source $scripts_dir/helpers.sh
 hostname 1>&2
 set -e
 set -u
-
+set -x
 # read input
 sample=$1
 ref=$2
