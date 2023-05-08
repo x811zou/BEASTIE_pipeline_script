@@ -7,7 +7,7 @@
 #SBATCH --out=log/%j.out
 #SBATCH --error=log/%j.out
 #SBATCH -p scavenger
-#SBATCH --time=6:00:00
+#SBATCH --time=24:00:00
 
 ############### testing command
 #ref=/data/reddylab/scarlett/reference/hg19

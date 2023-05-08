@@ -6,6 +6,7 @@ module load STAR/2.7.2b-gcb01
 module load bcftools
 module load picard-tools/2.4.1-gcb01
 module load java
+module load samtools/1.3.1-gcb01
 
 ##### fixed parameter
 Trimmomatic=/data/allenlab/scarlett/software/Trimmomatic-0.39
@@ -24,6 +25,7 @@ gencode_dir=$beastie_ref_dir/gencode_chr
 af_dir=$beastie_ref_dir/AF
 min_total=1
 min_single=0
+PICARD=/data/allenlab/scarlett/software/picard.jar
 
 # run_dir=/hpc/group/allenlab/scarlett/pipeline_working/run
 beastie_singularity_image=/data/allenlab/scarlett/BEASTIE-2023-02-21T08:03:20-0500.sif
@@ -40,10 +42,10 @@ threads=$SLURM_CPUS_ON_NODE
 
 # memory usage suggested
 step1_mem=5G
-step2_mem=150G
+step2_mem=50G
 step6_mem=15G
 step7_mem=164G
 
 ## SPAG1-original memory usage
 #step1_mem=5G
-#step2_mem=XG
+#step2_mem=50G
