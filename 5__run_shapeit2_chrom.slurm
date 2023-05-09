@@ -7,7 +7,6 @@
 #SBATCH --time=4:00:00
 #SBATCH --output=log/%j.out
 #SBATCH --error=log/%j.out
-#SBATCH -p scavenger
 
 ############### testing command
 # sample="HG00096"
