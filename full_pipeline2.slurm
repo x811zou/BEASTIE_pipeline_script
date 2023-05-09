@@ -39,7 +39,7 @@ sex=""
 keep_tmp=""
 force=""
 email=""
-
+# SPAG1-9806 has PASS in VCF
 pass=true
 force=false
 keep_tmp=false
@@ -311,7 +311,6 @@ mpileup_real_job_id=$(sbatch --parsable \
     )
 all_job_ids+=( $mpileup_real_job_id )
 
-
 # step4: genotyping error filtering
 genotypingEr_filter_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$trim_real_fastq_job_id:$align_real_fastq_job_id:$markDuplicates_waspFilter_job_id:$hetSNP_job_id:$mpileup_real_job_id \
@@ -408,6 +407,7 @@ if [[ "$is_GIAB" = true ]]; then
         )
     all_job_ids+=( $shapeit4_phasing_job_id )
 fi
+
 # step7: align simulated fastq
 align_sim_fastq_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$simulator_job_id:$genotypingEr_filter_job2_id \

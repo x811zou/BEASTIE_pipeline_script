@@ -6,7 +6,6 @@
 #SBATCH --output=log/%j.out
 #SBATCH --error=log/%j.out
 #SBATCH -c 1
-#SBATCH -p scavenger
 #SBATCH --time=4:00:00
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -30,4 +29,5 @@ ref=$5
 
 samtools mpileup -d 0 -s -f $ref -r chr$chr \
     -l <(cat $hetSNP | tail -n+2 | awk '{print $1,$3}' | grep 'chr'${chr}'\s') \
-    --output-extra FLAG,QNAME,RG,NM $bam > $output
+    $bam > $output
+#    --output-extra FLAG,QNAME,RG,NM $bam > $output

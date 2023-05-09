@@ -70,11 +70,11 @@ mkdir -p $out_dir $tmp_dir
 
 run_beastie_image \
     filterGenotypingError \
-    --out-dir $out_dir \
+    --beastie-outdir $out_dir \
     --filtered-het-snp-file $tmp_filtered_hetSNP \
-    --genotype-error-file $tmp_genotype_error_file \
+    --outfile $tmp_genotype_error_file \
     --vcfgz-file $input_vcfgz \
-    --sample $sample \
+    --vcf-sample-name $sample \
     --pileup-file $input_pileup \
     --input-het-snp-file $input_hetsnp \
     --ancestry $ancestry \

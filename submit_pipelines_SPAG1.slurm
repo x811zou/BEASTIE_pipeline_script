@@ -50,7 +50,6 @@ function submit_and_wait_sample() {
     raw_fq_rev=$(ls $raw_fq_dir/${postfix}*R2*fastq.gz)
     email=xz195@duke.edu
     partition=all
-
     ### Please do not change below this line
     working_dir=$base_working_dir/$sample
     success_file=$working_dir/success
@@ -70,7 +69,6 @@ function submit_and_wait_sample() {
         --fastq-read-length $read_length \
         --simulation-depth $simulation_depth \
         --email $email \
-        --noPASSfilter \
         --keep-tmp \
         --hardac \
     )

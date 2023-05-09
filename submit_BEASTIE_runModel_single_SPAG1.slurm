@@ -36,8 +36,8 @@ function submit_and_wait_sample() {
     ### Please change here for your sample: HG00096
     chr_start=1
     chr_end=22
-    read_length=120
-    simulation_length=120
+    read_length=150
+    simulation_length=150
     working_dir=/data/reddylab/scarlett/output/$sample
     raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-803694728_mget/$sample
     email=xue.zou@duke.edu

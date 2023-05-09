@@ -7,7 +7,6 @@
 #SBATCH --output=log/%j.out
 #SBATCH --error=log/%j.out
 #SBATCH -c 1
-#SBATCH -p scavenger
 
 if [ -n "$SLURM_JOB_ID" ] ; then
     script_path=$(realpath $(scontrol show job $SLURM_JOBID | awk -F= '/Command=/{print $2}' | cut -d' ' -f1 ))
