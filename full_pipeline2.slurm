@@ -48,6 +48,7 @@ simulate_allSNPs=true
 is_1000Genome=false
 is_GIAB=false
 partition="scavenger"
+VCF_only=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -66,6 +67,7 @@ while [[ "$#" -gt 0 ]]; do
         --simulate-hets-only) simulate_allSNPs=false ;;
         --is-1000Genome) is_1000Genome=true ;;
         --is-GIAB) is_GIAB=true ;;
+        --VCF-only) VCF_only=true ;;
         --simulate_random) simulation_haplotype_mode="random";;
         --keep-tmp) keep_tmp=true ;;
         --hardac) partition="all" ;;
@@ -168,6 +170,76 @@ echo "$sex" > $sex_file
 
 all_job_ids=()
 ######################################################################################################
+if [[ "$VCF_only" = true ]]; then
+    # step0: extract VCF                       (parallel to step1)
+    modify_haplotype_job_id=""
+    shapeit2_working_dir=$tmp_dir/shapeit2
+    shapeit4_working_dir=$tmp_dir/shapeit4
+    # individual VCF
+    extract_vcf_job_id=$(sbatch --parsable \
+        --job-name=${sample}-filterVCF \
+        --dependency=singleton \
+        --mail-user=$email \
+        -p $partition \
+        $scripts_dir/0_filter_vcf_individual.slurm $sample $vcf_path $tmp_dir/VCF $bi_vcfgz $bihet_vcfgz $pass)
+    all_job_ids+=( $extract_vcf_job_id )
+    # step3: extract het SNPs and then samtools mpileup for real data  (depend on step1)
+    hetSNP_job_id=$(sbatch --parsable \
+        --dependency=singleton,afterok:$extract_vcf_job_id \
+        --kill-on-invalid-dep=yes \
+        --job-name=${sample}-hetSNP \
+        --mail-user=$email \
+        -p $partition \
+        $scripts_dir/BEASTIE_extractHets.slurm \
+        $sample $bihet_vcfgz $gencode_dir 1 22 $hetSNP \
+        $tmp_dir \
+        )
+    all_job_ids+=( $hetSNP_job_id )
+    # shapeit2
+    shapeit2_haplotype_dir=$shapeit2_ref_dir
+    shapeit2_ref_sample=$shapeit2_haplotype_dir/$shapeit2_ref_sample_name
+    shapeit2_phasing_job_id=$(sbatch --parsable \
+        --nice \
+        --dependency=singleton,afterok:$extract_vcf_job_id \
+        --kill-on-invalid-dep=yes \
+        --job-name=${sample}-shapeit2 \
+        --mail-user=$email \
+        -p $partition \
+        $scripts_dir/5_run_shapeit2.slurm \
+        $sample \
+        $shapeit2_working_dir \
+        $shapeit2_ref_dir \
+        $shapeit2_haplotype_dir \
+        $shapeit2_ref_sample \
+        $bihet_vcfgz \
+        $shapeit2 \
+        )
+    all_job_ids+=( $shapeit2_phasing_job_id )
+    # shapeit4
+    shapeit4_haplotype_dir=$shapeit4_ref_dir
+    shapeit4_job_dependencies=($extract_vcf_job_id $modify_haplotype_job_id)
+    shapeit4_phasing_job_id=$(sbatch --parsable \
+        --nice \
+        --dependency=singleton,afterok:$extract_vcf_job_id\
+        --kill-on-invalid-dep=yes \
+        --job-name=${sample}-shapeit4 \
+        --mail-user=$email \
+        -p $partition \
+        $scripts_dir/5_run_shapeit4.slurm \
+        $sample \
+        $shapeit4_working_dir \
+        $tmp_dir/VCF/tmp.header.vcf \
+        $bihet_vcfgz \
+        $shapeit4 \
+        $shapeit4_haplotype_dir \
+        )
+    all_job_ids+=( $shapeit4_phasing_job_id )
+    wait_for_jobs ${all_job_ids[@]}
+
+    echo "writing success file"
+    echo `date` > $success_file
+fi
+
 # step0: extract VCF                       (parallel to step1)
 modify_haplotype_job_id=""
 shapeit2_working_dir=$tmp_dir/shapeit2

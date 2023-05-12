@@ -125,7 +125,7 @@ export -f wait_for_jobs
 # --noPASSfilter     --> default: there is PASS filter in VCF (SNPs will be filtered by quality score > 10 based on SPAG1 sample)
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
-
+samples="NA18934"
 parallel \
     -j 10 \
     --delay 1 \

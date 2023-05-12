@@ -52,7 +52,7 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} :"${now}
 job_ids=()
 for N in {1..22}
 do
-    ref=$ref_dir/chr${N}.vcf.gz
+    ref=$ref_dir/1000GP_Phase3_chr${N}_rm${sample}.vcf.gz
     job_id=$(sbatch --parsable \
         --job-name=${sample}-shapeit4-run-chr${N} \
         $scripts_dir/5__run_shapeit4_chrom.slurm \
