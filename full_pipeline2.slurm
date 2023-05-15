@@ -458,6 +458,7 @@ shapeit2_phasing_job_id=$(sbatch --parsable \
     $shapeit2_ref_sample \
     $filtered_bihet_vcfgz \
     $shapeit2 \
+    $ancestry \
     )
 all_job_ids+=( $shapeit2_phasing_job_id )
 

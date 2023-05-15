@@ -46,7 +46,8 @@ if [ -s "$out_shapeit2" -a -s "$vcfgz" ]; then
 fi
 
 # Define a list of possible matches
-GROUP_MATCHES=("all" "EUR" "AFR" "SAS" "AMR" "EAS" )
+GROUP_MATCHES=("all" "EUR" "AFR" "SAS" "AMR" "EAS")
+
 # Loop through the list of possible matches and check if the check string matches
 for MATCH in "${GROUP_MATCHES[@]}"; do
   case "$group" in
@@ -55,6 +56,11 @@ for MATCH in "${GROUP_MATCHES[@]}"; do
       ;;
   esac
 done
+
+# Set the check string to "all" outside the loop if there is no match
+if [ "$group" != "all" ]; then
+  group="all"
+fi
 
 # check output file existence
 out_folder="shapeit2_"$group
