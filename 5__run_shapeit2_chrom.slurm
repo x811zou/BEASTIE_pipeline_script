@@ -27,6 +27,7 @@ source $scripts_dir/helpers.sh
 hostname 1>&2
 set -e
 set -u
+set -x
 
 # specify sample
 sample=$1
@@ -36,6 +37,7 @@ modified_sample=$4
 ref_legend=$5
 ref_geneticMap=$6
 N=$7
+group=${8}
 
 # specify paths
 outDir=$working_dir
@@ -65,6 +67,12 @@ else
     exclude_SNP=""
 fi
 
+group_list=""
+if [ "$group" != "all" ];then
+    echo "$group exists."
+    group_list="--include-grp $group"
+fi
+
 $shapeit2_executable \
     --no-mcmc \
     --thread $threads \
@@ -73,7 +81,8 @@ $shapeit2_executable \
     --input-ref $input_hap $input_legend $input_sample \
     -O $outDir/chr${N}/phase_withoutseq/${sample}_chr${N}.phased.with.ref \
     --output-log $outDir/chr${N}/phase_withoutseq/${sample}_chr${N}.Phasing \
-    $exclude_SNP #$chrX
+    $exclude_SNP \
+    $group_list #$chrX
 
 now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> done with ${sample} phasing:"${now}

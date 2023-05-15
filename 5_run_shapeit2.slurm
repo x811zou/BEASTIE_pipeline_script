@@ -11,7 +11,8 @@
 #SBATCH --no-requeue
 
 ############### testing command
-# sbatch -p scavenger ../script/RNAseq-analysis/pipeline_scripts2/5_run_shapeit2.slurm NA12878 /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit2 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.no_chr.content.SNPs.hets.filtered.vcf.gz /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.shapeit.tsv
+# sbatch -p scavenger /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/5_run_shapeit2.slurm NA12878 /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit2 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.no_chr.content.SNPs.hets.filtered.vcf.gz /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.shapeit.EUR.tsv EUR
+#/datacommons/allenlab/scarlett/data/VCF/GIAB/group_EUR.list
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -36,6 +37,7 @@ hap_dir=$4
 ref_sample=$5
 vcfgz=$6
 out_shapeit2=$7
+group=$8 #/datacommons/allenlab/scarlett/data/VCF/GIAB/group_EUR.list
 
 # check output file existence
 if [ -s "$out_shapeit2" -a -s "$vcfgz" ]; then
@@ -43,8 +45,32 @@ if [ -s "$out_shapeit2" -a -s "$vcfgz" ]; then
     exit
 fi
 
+# Define a list of possible matches
+GROUP_MATCHES=("all" "EUR" "AFR" "SAS" "AMR" "EAS" )
+# Loop through the list of possible matches and check if the check string matches
+for MATCH in "${GROUP_MATCHES[@]}"; do
+  case "$group" in
+    "$MATCH")
+      echo "Group Match found: $group is a $MATCH"
+      ;;
+  esac
+done
+
+# check output file existence
+out_folder="shapeit2_"$group
 # create new directories
-mkdir -p $tmp_dir
+out_dir=$tmp_dir/$out_folder
+mkdir -p $out_dir
+
+if [ "$group" != "all" ]; then
+    if [ ! -f $out_dir/group.list ]; then
+        touch $out_dir/group.list
+    fi
+    echo $group > $out_dir/group.list
+    pass_group=$out_dir/group.list
+else
+    pass_group="all"
+fi
 
 now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start with ${sample} :"${now}
@@ -56,8 +82,8 @@ input_ref_dir=$ref_dir
 job_ids=()
 for N in {1..22}
 do
-    mkdir -p $tmp_dir/chr${N}/phase_withoutseq
-    mkdir -p $tmp_dir/chr${N}/vcf
+    mkdir -p $out_dir/chr${N}/phase_withoutseq
+    mkdir -p $out_dir/chr${N}/vcf
     input_haplotype=$hap_dir/1000GP_Phase3_chr${N}.hap.gz
     ref_legend=$ref_dir/1000GP_Phase3_chr${N}.legend.gz 
     ref_genetic_map=$ref_dir/genetic_map_chr${N}_combined_b37.txt
@@ -70,9 +96,9 @@ do
 
     #echo "I. prepare shapeit2 vcf"
     prep_job_id=$(sbatch --parsable \
-        --job-name=${sample}-shapeit2-prep-vcf-chr${N} \
+        --job-name=${sample}-shapeit2-$group-prep-vcf-chr${N} \
         $scripts_dir/5__prepare_shapeit2_chrom.slurm \
-        $sample $tmp_dir $vcfgz $N \
+        $sample $out_dir $vcfgz $N \
     )
     preparation_job_ids=( $prep_job_id )
 
@@ -80,18 +106,18 @@ do
     check_job_id=$(sbatch --parsable \
         --dependency=afterok:$prep_job_id \
         --kill-on-invalid-dep=yes \
-        --job-name=${sample}-shapeit2-check-chr${N} \
+        --job-name=${sample}-shapeit2-$group-check-chr${N} \
         $scripts_dir/5__check_shapeit2_chrom.slurm \
-        $sample $tmp_dir $input_haplotype $input_sample $ref_legend $ref_genetic_map $N \
+        $sample $out_dir $input_haplotype $input_sample $ref_legend $ref_genetic_map $N \
     )
     
     #echo "III. run shapeit2"
     job_id=$(sbatch --parsable \
         --dependency=afterok:$check_job_id \
         --kill-on-invalid-dep=yes \
-        --job-name=${sample}-shapeit2-run-chr${N} \
+        --job-name=${sample}-shapeit2-$group-run-chr${N} \
         $scripts_dir/5__run_shapeit2_chrom.slurm \
-        $sample $tmp_dir $input_haplotype $input_sample $ref_legend $ref_genetic_map $N \
+        $sample $out_dir $input_haplotype $input_sample $ref_legend $ref_genetic_map $N $pass_group \
     )
     job_ids+=( $job_id )
 done
@@ -107,14 +133,14 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> done processing chromosomes ${sample} 
 arguments=()
 for N in {1..22}
 do
-    arg="<(sort -k3 -n $tmp_dir/chr${N}/phase_withoutseq/${sample}_chr${N}.phased.with.ref.haps \
+    arg="<(sort -k3 -n $out_dir/chr${N}/phase_withoutseq/${sample}_chr${N}.phased.with.ref.haps \
         | cut -d' ' -f2 --complement \
         | awk '!seen[\$1_\$2]++' \
         | tr ' ' '\t')"
     arguments+=( "$arg" )
 done
 
-tmp_output=$tmp_dir/combined
+tmp_output=$out_dir/combined
 header='chr pos ref alt e_paternal e_maternal'
 eval cat <(echo "$header") ${arguments[@]} > $tmp_output
 mv $tmp_output $out_shapeit2
