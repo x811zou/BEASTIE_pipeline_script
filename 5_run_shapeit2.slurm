@@ -12,7 +12,7 @@
 
 ############### testing command
 # sbatch -p scavenger /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/5_run_shapeit2.slurm NA12878 /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit2 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.no_chr.content.SNPs.hets.filtered.vcf.gz /hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.shapeit.EUR.tsv EUR
-#/datacommons/allenlab/scarlett/data/VCF/GIAB/group_EUR.list
+# sbatch -p all /data/allenlab/scarlett/github/BEASTIE_pipeline_script/5_run_shapeit2.slurm SPAG-9806 /data/reddylab/scarlett/output/SPAG1-9806/tmp/shapeit2 /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3 /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample /data/reddylab/scarlett/output/SPAG1-9806/SPAG1-9806.no_chr.content.SNPs.hets.filtered.vcf.gz /data/reddylab/scarlett/output/SPAG1-9806/SPAG1-9806.shapeit.all.tsv all
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -46,19 +46,13 @@ if [ -s "$out_shapeit2" -a -s "$vcfgz" ]; then
 fi
 
 # Define a list of possible matches
-GROUP_MATCHES=("all" "EUR" "AFR" "SAS" "AMR" "EAS")
+GROUP_MATCHES=("EUR" "AFR" "SAS" "AMR" "EAS")
 
-# Loop through the list of possible matches and check if the check string matches
-for MATCH in "${GROUP_MATCHES[@]}"; do
-  case "$group" in
-    "$MATCH")
-      echo "Group Match found: $group is a $MATCH"
-      ;;
-  esac
-done
-
-# Set the check string to "all" outside the loop if there is no match
-if [ "$group" != "all" ]; then
+# Check if the group parameter is in the GROUP_MATCHES list
+if [[ "${GROUP_MATCHES[*]}" =~ "$group" ]]; then
+  echo "Group match found: $group is a $group"
+else
+  echo "Group parameter '$group' is invalid. Assigning 'all' instead."
   group="all"
 fi
 
