@@ -94,9 +94,9 @@ export -f wait_for_jobs
 ########### UDN
 #UDN042246_family=["UDN042246-P","UDN205393-F","UDN754343-M"]
 
-samples="UDN205393-F"
+samples="UDN205393-F UDN754343-M UDN042246-P" 
 parallel \
-    -j 1 \
+    -j 3 \
     --delay 1 \
     -v --line-buffer \
     submit_and_wait_sample \

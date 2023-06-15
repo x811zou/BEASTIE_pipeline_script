@@ -382,7 +382,7 @@ mpileup_real_job_id=$(sbatch --parsable \
     $sample $tmp_dir $tmp_dir/mpileup $hetSNP $real_bam $real_pileup $ref_fasta \
     )
 all_job_ids+=( $mpileup_real_job_id )
-
+exit
 # step4: genotyping error filtering
 genotypingEr_filter_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$trim_real_fastq_job_id:$align_real_fastq_job_id:$markDuplicates_waspFilter_job_id:$hetSNP_job_id:$mpileup_real_job_id \
