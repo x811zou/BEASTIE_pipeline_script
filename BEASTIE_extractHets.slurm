@@ -40,7 +40,7 @@ output=$6
 tmp_dir=$7
 
 if [ -s "$output" -a "$output" -nt "$input_vcfgz" ]; then
-    if [[ $(zcat "$output" | head -n20 | wc -l) -gt 11 ]]; then 
+    if [[ $(cat "$output" | head -n20 | wc -l) -gt 11 ]]; then 
         echo "$output exists and non-empty, newer than $input_vcfgz."
         exit
     fi
