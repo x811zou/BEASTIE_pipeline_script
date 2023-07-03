@@ -39,7 +39,7 @@ function submit_and_wait_sample() {
     postfix="GIAB"
     echo ">>> GIAB sample!"
     base_working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB
-    vcf_dir=/datacommons/allenlab/scarlett/data/VCF/GIAB/NA12878_NISTv4.2.1_GRCh37/HG001_GRCh37_1_22_v4.2.1_benchmark.vcf.gz 
+    vcf_dir=/datacommons/allenlab/scarlett/data/VCF/GIAB/NA12878_NISTv3.3_GRCh37/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer.vcf.gz
     raw_fq_dir=/datacommons/allenlab/scarlett/data/fastq/$sample
     read_length=101
     simulation_depth=101

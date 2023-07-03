@@ -5,8 +5,8 @@
 #SBATCH --mem=8G
 #SBATCH --time=8:00:00
 #SBATCH -c 4 
-#SBATCH --output=log/%J.stdout
-#SBATCH --error=log/%J.stdout
+#SBATCH --output=log/%J.out
+#SBATCH --error=log/%J.out
 #SBATCH -p scavenger
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -70,11 +70,11 @@ mkdir -p $out_dir $tmp_dir
 
 run_beastie_image \
     filterGenotypingError \
-    --beastie-outdir $out_dir \
+    --out-dir $out_dir \
     --filtered-het-snp-file $tmp_filtered_hetSNP \
-    --outfile $tmp_genotype_error_file \
+    --genotype-error-file $tmp_genotype_error_file \
     --vcfgz-file $input_vcfgz \
-    --vcf-sample-name $sample \
+    --sample $sample \
     --pileup-file $input_pileup \
     --input-het-snp-file $input_hetsnp \
     --ancestry $ancestry \

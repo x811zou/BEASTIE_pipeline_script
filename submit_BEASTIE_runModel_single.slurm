@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-BEASTIE
+#SBATCH --job-name=submit-BEASTIE-TSI
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -7,8 +7,8 @@
 #SBATCH --oversubscribe
 #SBATCH --no-requeue
 #SBATCH --dependency=singleton
-#SBATCH --out=log/%j.out
-#SBATCH --error=log/%j.out
+#SBATCH --out=/hpc/group/allenlab/scarlett/pipeline_working/log/%j.out
+#SBATCH --error=/hpc/group/allenlab/scarlett/pipeline_working/log/%j.out
 
 ########### testing commands
 ## GIAB/GSD
@@ -83,7 +83,7 @@ function submit_and_wait_sample() {
     fi
     chr_start=1
     chr_end=22
-    modelname="iBEASTIE3"
+    modelname="iBEASTIE4"
     working_dir=$base_working_dir/$sample
     ancestry=$(get_ancestry $raw_fq_dir)
     beastie_dir=$working_dir/beastie
@@ -92,8 +92,8 @@ function submit_and_wait_sample() {
     input_simulation_pileup=$working_dir/${sample}.simulation_even_${simulation_depth}.pileup.gz
     filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
     input_shapeit2=$working_dir/${sample}.shapeit.tsv
-    sigma1=0.5
-    sigma2=1000000
+    sigma1=0.7
+    sigma2=1
     #
     all_job_ids=()
     job_id=$(sbatch \
@@ -133,9 +133,9 @@ export scripts_dir
 #     ::: $samples
 
 ### Please change here for your sample: GSD
-samples="123375"
+#samples="123375"
 parallel \
-    -j 1 \
+    -j 5 \
     --delay 1 \
     -v --line-buffer \
     submit_and_wait_sample \

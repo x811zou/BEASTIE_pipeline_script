@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=create_modified_haplotype_s4
+#SBATCH --job-name=create_modified_haplotype_s4-chr6
 #SBATCH --mail-user=xz195@duke.edu
 #SBATCH --mail-type=FAIL
 #SBATCH --mem=512M
@@ -10,8 +10,11 @@
 #SBATCH -p scavenger
 
 ############### testing command
-# sample="HG00096"
-# sbatch -p scavenger ../script/RNAseq-analysis/pipeline_scripts/4__create_modified_hap_chrom.slurm $sample /hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample/tmp/shapeit2/ref_rm${sample} /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3_chr21.hap.gz /hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample/tmp/shapeit2/ref_rm${sample}/1000GP_Phase3_chr${N}_rm${sample}.hap.gz ${N} 2
+# N=6
+# ref_haplotype=/datacommons/allenlab/scarlett/reference/shapeit4/reference/all/ALL.chr${N}.phase3_v5.shapeit2_mvncall_integrated.noSingleton.genotypes.vcf.gz
+# modified_haplotype=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit4/modified_haplotype.tmp/1000GP_Phase3_chr${N}_rmNA12878.vcf.gz
+# index=1754
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/5__create_modified_hap_chrom_s4.slurm $ref_haplotype $modified_haplotype $N $index
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -39,4 +42,4 @@ bgzip -@ $threads -cd $ref_haplotype \
     | awk '{ if ($0 !~ /^#/) print | "sort -k1,1V -k2,2n"; else print }' \
     | bgzip -@ $threads -c -l3 > $modified_haplotype
 bcftools index $modified_haplotype
-
+echo "done!"

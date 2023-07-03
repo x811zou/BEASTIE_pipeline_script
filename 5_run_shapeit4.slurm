@@ -83,11 +83,11 @@ now=$(date +"%T")
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> done processing chromosomes ${sample} :"${now}
 
 # III. combine shapeit2 result:sort the pos for each chromosome output, and then concatenate them in order
-header='chr pos ref alt e_paternal e_maternal'
+header='chr\tpos\tref\talt\te_paternal\te_maternal'
 tmp_output=$tmp_dir/combined
 cat $tmp_dir/chr{1..22}.phased.cleaned.vcf > $tmp_output
 sed -i 's/^/chr/' $tmp_output
-cat <(echo "$header") $tmp_output > $tmp_output
+echo -e "$header\n$(cat $tmp_output)" > $tmp_output
 mv $tmp_output $out_shapeit4
 
 now=$(date +"%T")

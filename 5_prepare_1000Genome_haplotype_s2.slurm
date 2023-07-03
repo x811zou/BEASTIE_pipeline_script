@@ -70,7 +70,7 @@ do
 
     modified_haplotype=$tmp_out_dir/1000GP_Phase3_chr${N}.hap.gz
     prep_job_id=$(sbatch --parsable \
-        --job-name=${sample}-modify-1000genome-haplotype-chr${N} \
+        --job-name=${sample}-modify-1000genome-haplotype-chr${N}-s2 \
         $scripts_dir/5__create_modified_hap_chrom.slurm \
         $ref_haplotype $modified_haplotype $N $index \
     )

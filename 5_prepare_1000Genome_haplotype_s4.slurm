@@ -10,10 +10,11 @@
 #SBATCH --no-requeue
 
 ############### testing command
-# sample="NA12878"
+# sample=NA12878 #
+# ref_sample=/datacommons/allenlab/scarlett/reference/shapeit2/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample
 # ref_dir=/datacommons/allenlab/scarlett/reference/shapeit4/reference/all
-# out_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit4/modified_ref
-# sbatch ../script/RNAseq-analysis/pipeline_scripts2/5_prepare_1000Genome_haplotype_s4.slurm $sample $ref_dir $out_dir
+# out_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit4/modified_haplotype
+# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/5_prepare_1000Genome_haplotype_s4.slurm $sample $ref_sample $ref_dir $out_dir
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -32,8 +33,9 @@ set -u
 
 # specify parameters
 sample=$1
-ref_dir=$2
-out_dir=$3
+ref_sample=$2
+ref_dir=$3
+out_dir=$4
 
 # check output file existence
 if [ -d "$out_dir" ]; then
@@ -46,10 +48,10 @@ tmp_out_dir=${out_dir}.tmp
 mkdir -p $tmp_out_dir
 
 # I. create modified reference sample/haplotype
-ref_sample=$tmp_out_dir/sample.file
-zcat $ref_dir/chr21.vcf.gz | grep -v "^##" | head -n 1  > $ref_sample
+modified_sample=$tmp_out_dir/1000GP_Phase3.sample
 # II. create modified sample: extract the line with sample from 1000 genome reference panel 2505 individuals, remove this line from sample file
-index=$(awk -F'\t' '{for (i=1; i<=NF; i++) if ($i == "'$sample'") print i}' ${ref_sample})
+index=$(cat ${ref_sample} | grep -n ${sample} | head -n1 | cut -d: -f 1)
+sed -e "${index}d" ${ref_sample} > $modified_sample
 
 # II. prepare, check and run shapeit2:
 preparation_job_ids=()
@@ -68,4 +70,4 @@ done
 wait_for_jobs ${preparation_job_ids[@]} || exit 1
 
 mv $tmp_out_dir $out_dir
-
+echo "done"

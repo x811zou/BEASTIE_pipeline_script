@@ -77,7 +77,7 @@ fi
 
 stan_path="/usr/local/bin"
 if [ "$modelname" != "iBEASTIE2" ]; then
-    stan_path="/hpc/group/allenlab/scarlett/software/cmdstan-2.27.0/examples/"$modelname
+    stan_path="/hpc/group/allenlab/scarlett/github/stan_models/"$modelname
 fi
 
 ld_token_arg=""

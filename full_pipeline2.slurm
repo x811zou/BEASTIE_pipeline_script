@@ -139,7 +139,7 @@ real_pileup=$working_dir/${sample}.pileup.gz
 simulation_fwd_fastq=$simulation_dir/${sample}_FWD_paired.fq.gz
 simulation_rev_fastq=$simulation_dir/${sample}_REV_paired.fq.gz
 simulation_pileup=$working_dir/${sample}.simulation_${simulation_haplotype_mode}_${simulation_depth}.pileup.gz
-shapeit2=$working_dir/${sample}.shapeit.tsv
+shapeit2=$working_dir/${sample}.shapeit2.tsv
 shapeit4=$working_dir/${sample}.shapeit4.tsv
 success_file=$working_dir/success
 seed_file=$working_dir/simulation_seed
@@ -274,17 +274,31 @@ else
         $scripts_dir/0_filter_vcf_individual.slurm $sample $vcf_path $tmp_dir/VCF $bi_vcfgz $bihet_vcfgz $pass)
     shapeit2_haplotype_dir=$shapeit2_ref_dir
     if [[ "$is_GIAB" = true ]]; then
+        shapeit2_haplotype_dir=$shapeit2_ref_dir
+        # prepare shapeit2 haplotype file
+        haplotype2_dir=$shapeit2_working_dir/modified_haplotype
+        shapeit2_ref_sample=$shapeit2_ref_dir/$shapeit2_ref_sample_name
+        modify_haplotype2_job_id=$(sbatch --parsable \
+            --job-name=${sample}-modifyHaplotype-s2 \
+            --dependency=singleton \
+            --mail-user=$email \
+            -p $partition \
+            $scripts_dir/5_prepare_1000Genome_haplotype_s2.slurm $sample $shapeit2_ref_sample $shapeit2_ref_dir $haplotype2_dir )
+        shapeit2_haplotype_dir=$haplotype2_dir
+        all_job_ids+=( $modify_haplotype2_job_id )
+
         shapeit4_haplotype_dir=$shapeit4_ref_dir
         # prepare shapeit4 reference file
-        haplotype4_dir=$shapeit4_working_dir/modified_reference
-        modify_haplotype_job_id=$(sbatch --parsable \
+        haplotype4_dir=$shapeit4_working_dir/modified_haplotype
+        shapeit4_ref_sample=$shapeit4_ref_dir/$shapeit2_ref_sample_name
+        modify_haplotype4_job_id=$(sbatch --parsable \
             --job-name=${sample}-modifyHaplotype-s4 \
             --dependency=singleton \
             --mail-user=$email \
             -p $partition \
-            $scripts_dir/5_prepare_1000Genome_haplotype_s4.slurm $sample $shapeit4_ref_dir $haplotype4_dir )
+            $scripts_dir/5_prepare_1000Genome_haplotype_s4.slurm $sample $shapeit4_ref_sample $shapeit4_ref_dir $haplotype4_dir )
         shapeit4_haplotype_dir=$haplotype4_dir
-        all_job_ids+=( $modify_haplotype_job_id )
+        all_job_ids+=( $modify_haplotype4_job_id )
     fi
 fi
 all_job_ids+=( $extract_vcf_job_id )
@@ -442,7 +456,7 @@ all_job_ids+=( $simulator_job_id )
 
 # step6: shapeit2 phasing
 shapeit2_ref_sample=$shapeit2_haplotype_dir/$shapeit2_ref_sample_name
-shapeit2_job_dependencies=($modify_haplotype_job_id $genotypingEr_filter_job2_id)
+shapeit2_job_dependencies=($modify_haplotype2_job_id $genotypingEr_filter_job2_id)
 shapeit2_phasing_job_id=$(sbatch --parsable \
     --nice \
     --dependency=singleton,afterok:$(echo "${shapeit2_job_dependencies[@]}" | tr ' ' ':') \
@@ -462,8 +476,8 @@ shapeit2_phasing_job_id=$(sbatch --parsable \
     )
 all_job_ids+=( $shapeit2_phasing_job_id )
 
-if [[ "$is_GIAB" = true ]]; then
-    shapeit4_job_dependencies=($extract_vcf_job_id $modify_haplotype_job_id)
+if [[ "$is_1000Genome" != true ]]; then
+    shapeit4_job_dependencies=($extract_vcf_job_id $modify_haplotype4_job_id $genotypingEr_filter_job2_id)
     shapeit4_phasing_job_id=$(sbatch --parsable \
         --nice \
         --dependency=singleton,afterok:$(echo "${shapeit4_job_dependencies[@]}" | tr ' ' ':') \

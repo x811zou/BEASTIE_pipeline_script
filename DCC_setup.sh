@@ -54,4 +54,4 @@ step6_mem=10G
 # recommendation:
 # 8G for 1000 genome samples
 # 9G for GSD samples
-step7_mem=120G
+step7_mem=130G

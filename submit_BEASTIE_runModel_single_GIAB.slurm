@@ -43,7 +43,7 @@ function submit_and_wait_sample() {
 
     ### Please do not change below this line
     modelname="iBEASTIE3"
-    sigma=0.5
+    sigma=1
     ancestry="CEU"
     beastie_dir=$working_dir/beastie
     input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz

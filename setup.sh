@@ -1,1 +1,1 @@
-hardac_setup.sh
+DCC_setup.sh
