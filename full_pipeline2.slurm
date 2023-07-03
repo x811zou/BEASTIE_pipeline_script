@@ -240,10 +240,11 @@ if [[ "$VCF_only" = true ]]; then
     echo `date` > $success_file
 fi
 
-# step0: extract VCF                       (parallel to step1)
-modify_haplotype_job_id=""
+# step0: extract VCF                      (parallel to step1)
+modify_haplotype2_job_id=""
 shapeit2_working_dir=$tmp_dir/shapeit2
 shapeit4_working_dir=$tmp_dir/shapeit4
+## 1000 Genome samples have to modify shapeit2 haplotype files (extract that individual out)
 if [[ "$is_1000Genome" = true ]]; then
     # extract 1000 genome VCF
     extract_vcf_job_id=$(sbatch --parsable \
@@ -253,18 +254,17 @@ if [[ "$is_1000Genome" = true ]]; then
         -p $partition \
         $scripts_dir/0_extract_vcf_1000genome.slurm $sample $tmp_dir/VCF $vcf_path $bi_vcfgz $bihet_vcfgz)
     # prepare haplotype file
-    haplotype_dir=$shapeit2_working_dir/modified_haplotype
+    haplotype2_dir=$shapeit2_working_dir/modified_haplotype
     shapeit2_ref_sample=$shapeit2_ref_dir/$shapeit2_ref_sample_name
-    modify_haplotype_job_id=$(sbatch --parsable \
+    modify_haplotype2_job_id=$(sbatch --parsable \
         --job-name=${sample}-modifyHaplotype-s2 \
         --dependency=singleton \
         --mail-user=$email \
         -p $partition \
         $scripts_dir/5_prepare_1000Genome_haplotype_s2.slurm $sample $shapeit2_ref_sample $shapeit2_ref_dir $haplotype_dir )
-    shapeit2_haplotype_dir=$haplotype_dir
-    all_job_ids+=( $modify_haplotype_job_id )
+    shapeit2_haplotype_dir=$haplotype2_dir
+    all_job_ids+=( $modify_haplotype2_job_id )
 else
-    # TODO test this
     # individual VCF
     extract_vcf_job_id=$(sbatch --parsable \
         --job-name=${sample}-filterVCF \
@@ -272,6 +272,7 @@ else
         --mail-user=$email \
         -p $partition \
         $scripts_dir/0_filter_vcf_individual.slurm $sample $vcf_path $tmp_dir/VCF $bi_vcfgz $bihet_vcfgz $pass)
+
     shapeit2_haplotype_dir=$shapeit2_ref_dir
     if [[ "$is_GIAB" = true ]]; then
         shapeit2_haplotype_dir=$shapeit2_ref_dir
@@ -396,7 +397,7 @@ mpileup_real_job_id=$(sbatch --parsable \
     $sample $tmp_dir $tmp_dir/mpileup $hetSNP $real_bam $real_pileup $ref_fasta \
     )
 all_job_ids+=( $mpileup_real_job_id )
-exit
+
 # step4: genotyping error filtering
 genotypingEr_filter_job_id=$(sbatch --parsable \
     --dependency=singleton,afterok:$extract_vcf_job_id:$trim_real_fastq_job_id:$align_real_fastq_job_id:$markDuplicates_waspFilter_job_id:$hetSNP_job_id:$mpileup_real_job_id \
@@ -476,7 +477,7 @@ shapeit2_phasing_job_id=$(sbatch --parsable \
     )
 all_job_ids+=( $shapeit2_phasing_job_id )
 
-if [[ "$is_1000Genome" != true ]]; then
+if [[ "$is_GIAB" == true ]]; then
     shapeit4_job_dependencies=($extract_vcf_job_id $modify_haplotype4_job_id $genotypingEr_filter_job2_id)
     shapeit4_phasing_job_id=$(sbatch --parsable \
         --nice \

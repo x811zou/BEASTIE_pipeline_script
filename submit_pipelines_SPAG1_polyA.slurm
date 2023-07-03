@@ -40,7 +40,7 @@ function submit_and_wait_sample() {
     sex="female"
     base_working_dir=/data/reddylab/scarlett/output/
     vcf_dir=/data/cegs_ccgr/data/raw/wes_vcf/M2780_exome_calls.vcf.gz
-    ##### SPAG polyA (--noPASSfilter)
+    ##### SPAG polyA 
     raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-835516727
     ##### SPAG original
     #raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-803694728_mget/$sample
@@ -93,7 +93,7 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
-samples="SPAG1-9806_polyA" #"SPAG1-9806" #"SPAG1-9806_polyA"
+samples="SPAG1-9806_polyA" 
 parallel \
     -j 1 \
     --delay 1 \

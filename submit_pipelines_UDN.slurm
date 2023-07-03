@@ -29,6 +29,15 @@ set -u
 
 function submit_and_wait_sample() {
     sample=$1
+    # if [[ "$sample" = "UDN042246-P" ]]; then
+    #     vcf_sample="894124-UDN042246"
+    # fi
+    # if [[ "$sample" = "UDN205393-F" ]]; then
+    #     vcf_sample="894126-UDN205393"
+    # fi
+    # if [[ "$sample" = "UDN754343-M" ]]; then
+    #     vcf_sample="894125-UDN754343"
+    # fi
     source $scripts_dir/setup.sh
     source $scripts_dir/helpers.sh
     echo "submitting pipeline for $sample"
