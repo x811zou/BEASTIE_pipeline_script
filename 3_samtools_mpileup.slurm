@@ -45,9 +45,13 @@ output_file=$6
 ref=$7
 
 # check 
-if [ -s "$output_file" ]; then
-    echo "$output_file exists."
-    exit
+if [ -s "$output_file" -a "$output_file" -nt "$hetSNP" ]; then
+    if [[ $(zcat "$output_file" | head -n20 | wc -l) -gt 11 ]]; then 
+        echo "$output_file exists and non-empty, newer than $hetSNP."
+        exit
+    else
+        rm $output_file
+    fi
 fi
 
 mkdir -p $save_dir
