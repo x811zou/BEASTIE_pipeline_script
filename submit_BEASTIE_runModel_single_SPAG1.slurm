@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-BEASTIE-SPAG1
+#SBATCH --job-name=submit-BEASTIE-SPAG1-original
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -11,7 +11,7 @@
 #SBATCH --error=log/%j.out
 
 ########### testing commands
-# sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_SPAG1.slurm
+# sbatch /data/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_BEASTIE_runModel_single_SPAG1.slurm
 ###########
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -32,6 +32,7 @@ function submit_and_wait_sample() {
     sample=$1
     source $scripts_dir/setup.sh
     source $scripts_dir/helpers.sh
+    echo "submitting pipeline for $sample"
 
     ### Please change here for your sample: HG00096
     chr_start=1
@@ -45,14 +46,14 @@ function submit_and_wait_sample() {
 
     ### Please do not change below this line
     modelname="iBEASTIE3"
-    sigma=0.5
+    sigma=0.7
     ancestry="EUR"
     beastie_dir=$working_dir/beastie
     input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
     output_dir=$beastie_dir/runModel_phased_even${simulation_length}
     input_simulation_pileup=$working_dir/${sample}.simulation_even_${simulation_length}.pileup.gz
     filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
-    input_shapeit2=$working_dir/${sample}.shapeit.tsv
+    #input_shapeit2=$working_dir/${sample}.shapeit.tsv
     
     job_id=$(sbatch \
         --parsable \
@@ -60,7 +61,7 @@ function submit_and_wait_sample() {
         --mail-user=$email \
         -p $partition \
         $scripts_dir/BEASTIE_runModel.slurm \
-        $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
+        $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup
     )
 
     wait_for_jobs $job_id

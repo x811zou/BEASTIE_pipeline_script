@@ -110,4 +110,3 @@ parallel \
     -v --line-buffer \
     submit_and_wait_sample \
     ::: $samples
-

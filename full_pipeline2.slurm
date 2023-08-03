@@ -382,7 +382,7 @@ hetSNP_job_id=$(sbatch --parsable \
     -p $partition \
     $scripts_dir/BEASTIE_extractHets.slurm \
     $sample $bihet_vcfgz $gencode_dir 1 22 $hetSNP \
-    $tmp_dir \
+    $tmp_dir $pass \
     )
 all_job_ids+=( $hetSNP_job_id )
 
@@ -515,7 +515,6 @@ align_sim_fastq_job_id=$(sbatch --parsable \
     $simulation_dir/star_2pass_WASP_m${mismatchN} \
     )
 all_job_ids+=( $align_sim_fastq_job_id )
-
 
 # step8: samtools mpileup for simulation data
 mpileup_sim_job_id=$(sbatch --parsable \

@@ -70,7 +70,6 @@ mkdir -p $out_dir $tmp_dir
 
 run_beastie_image \
     filterGenotypingError \
-    --out-dir $out_dir \
     --filtered-het-snp-file $tmp_filtered_hetSNP \
     --genotype-error-file $tmp_genotype_error_file \
     --vcfgz-file $input_vcfgz \
@@ -83,6 +82,7 @@ run_beastie_image \
     --chr-end $chr_end \
     --af-dir $af_dir \
     --genotypeEr-cutoff $genotypeEr_cutoff \
+    --out-dir $out_dir \
     --warmup $WARMUP \
     --keeper $KEEPER
 
