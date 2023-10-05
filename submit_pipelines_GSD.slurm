@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-pipelines-GSD
+#SBATCH --job-name=submit-pipelines-GSD-MA1
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -7,8 +7,8 @@
 #SBATCH --oversubscribe
 #SBATCH --no-requeue
 #SBATCH --dependency=singleton
-#SBATCH --out=log/%j.out
-#SBATCH --error=log/%j.out
+#SBATCH --out=/hpc/group/allenlab/scarlett/pipeline_working/log/%j.out
+#SBATCH --error=/hpc/group/allenlab/scarlett/pipeline_working/log/%j.out
 
 ########### testing commands
 # sbatch /hpc/group/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines_GSD.slurm
@@ -28,7 +28,6 @@ source $scripts_dir/helpers.sh
 hostname 1>&2
 set -e
 set -u
-
 
 function submit_and_wait_sample() {
     sample=$1
@@ -92,9 +91,9 @@ export -f wait_for_jobs
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
 # samples="123375" # 123667 125249 125260 122698 122687 122687_merged"
-samples="123667" # 125249 125260 122698 122687 122687_merged"
+samples="123375" # 125249 125260 122698 122687 122687_merged"
 parallel \
-    -j 10 \
+    -j 5 \
     --delay 1 \
     -v --line-buffer \
     submit_and_wait_sample \

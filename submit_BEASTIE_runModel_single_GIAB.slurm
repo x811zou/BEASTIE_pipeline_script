@@ -43,14 +43,14 @@ function submit_and_wait_sample() {
 
     ### Please do not change below this line
     modelname="iBEASTIE3"
-    sigma=1
+    sigma=0.7
     ancestry="CEU"
     beastie_dir=$working_dir/beastie
     input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
     output_dir=$beastie_dir/runModel_phased_even${simulation_length}
     input_simulation_pileup=$working_dir/${sample}.simulation_even_${simulation_length}.pileup.gz
     filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
-    input_shapeit2=$working_dir/${sample}.shapeit.tsv
+    input_shapeit2=$working_dir/${sample}.shapeit2.tsv
     
     job_id=$(sbatch \
         --parsable \

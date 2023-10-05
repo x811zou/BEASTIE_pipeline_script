@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-BEASTIE-TSI
+#SBATCH --job-name=submit-BEASTIE-MA1
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -49,7 +49,6 @@ fi
 
 function submit_and_wait_sample() {
     sample=$1
-
     source $scripts_dir/setup.sh
     source $scripts_dir/helpers.sh
     GSD_list=("123375" "123667" "125249" "125260" "122687_merged" "122698")
@@ -69,6 +68,7 @@ function submit_and_wait_sample() {
         ### GSD
         base_working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/GSD
         raw_fq_dir=/datacommons/allenlab/scarlett/data/GSD/ShortReadRNA/$sample
+        ancestry="EUR"
         read_length=50
         simulation_depth=100    
     else
@@ -78,6 +78,7 @@ function submit_and_wait_sample() {
         base_working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/1000Genome
         # base_working_dir=/work/xz195
         raw_fq_dir=/datacommons/allenlab/scarlett/data/fastq/1000Genome/$sample
+        ancestry=$(get_ancestry $raw_fq_dir)
         read_length=75
         simulation_depth=100
     fi
@@ -85,7 +86,6 @@ function submit_and_wait_sample() {
     chr_end=22
     modelname="iBEASTIE4"
     working_dir=$base_working_dir/$sample
-    ancestry=$(get_ancestry $raw_fq_dir)
     beastie_dir=$working_dir/beastie
     input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
     output_dir=$beastie_dir/runModel_phased_even${simulation_depth}
@@ -93,7 +93,6 @@ function submit_and_wait_sample() {
     filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
     input_shapeit2=$working_dir/${sample}.shapeit.tsv
     sigma1=0.7
-    sigma2=1
     #
     all_job_ids=()
     job_id=$(sbatch \
@@ -103,16 +102,15 @@ function submit_and_wait_sample() {
         $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma1 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
     )
     all_job_ids+=( $job_id )
-    job_id2=$(sbatch \
-        --parsable \
-        --dependency=singleton,afterok:$job_id \
-        --kill-on-invalid-dep=yes \
-        --job-name=${sample}-${ancestry}-${modelname}-${sigma2} \
-        $scripts_dir/BEASTIE_runModel.slurm \
-        $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma2 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
-    )
-    all_job_ids+=( $job_id2 )
-
+    # job_id2=$(sbatch \
+    #     --parsable \
+    #     --dependency=singleton,afterok:$job_id \
+    #     --kill-on-invalid-dep=yes \
+    #     --job-name=${sample}-${ancestry}-${modelname}-${sigma2} \
+    #     $scripts_dir/BEASTIE_runModel.slurm \
+    #     $input_vcfgz $sample $ancestry $output_dir $chr_start $chr_end $sigma2 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
+    # )
+    #all_job_ids+=( $job_id2 )
     wait_for_jobs ${all_job_ids[@]}
 
     echo "finished $sample"
@@ -133,7 +131,7 @@ export scripts_dir
 #     ::: $samples
 
 ### Please change here for your sample: GSD
-#samples="123375"
+samples="123375"
 parallel \
     -j 5 \
     --delay 1 \

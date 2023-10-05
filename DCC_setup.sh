@@ -34,7 +34,7 @@ af_dir=/datacommons/allenlab/scarlett/reference/beastie_reference/AF
 run_dir=/hpc/group/allenlab/scarlett/pipeline_working/run
 
 beastie_singularity_image=/hpc/group/allenlab/scarlett/singularity_beastie/BEASTIE.sif
-singularity_mount_paths=( /datacommons/allenlab/scarlett /hpc/group/allenlab/scarlett /work/xz195 )
+singularity_mount_paths=( /datacommons/allenlab/scarlett /hpc/group/allenlab/scarlett )
 
 shapeit2_executable=/hpc/group/allenlab/scarlett/software/shapeit2/bin/shapeit
 simulator_py=/hpc/group/allenlab/scarlett/github/spliced_simulator/unbiased-spliced-rna-test.py
