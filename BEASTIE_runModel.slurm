@@ -76,8 +76,8 @@ if [ "$nophasing" = "True" ]; then
 fi
 
 stan_path="/usr/local/bin"
-if [ "$modelname" != "iBEASTIE2" ]; then
-    stan_path="/hpc/group/allenlab/scarlett/github/stan_models/"$modelname
+if [ "$modelname" != "iBEASTIE3" ]; then
+    stan_path="/hpc/group/allenlab/scarlett/github/RNAseq-analysis/stan_models/"
 fi
 
 ld_token_arg=""
@@ -97,27 +97,28 @@ fi
 
 run_beastie_image \
     runModel \
-    --model $modelname \
-    --min-single-cov $min_single_count \
-    --min-total-cov $min_total_count \
     --vcfgz-file $input_vcfgz \
     --vcf-sample-name $sample_name_in_vcf \
+    --filtered-het-snp-file $filtered_hetSNP_file \
     --ancestry $ancestry \
     --chr-start $chr_start \
     --chr-end $chr_end \
-    --sigma $sigma \
+    --min-single-cov $min_single_count \
+    --min-total-cov $min_total_count \
     --read-length $read_length \
     --output-dir $output_dir \
-    --filtered-het-snp-file $filtered_hetSNP_file \
+    --ldlink-cache-dir /hpc/group/allenlab/scarlett/script/beastie_cache \
+    --ldlink-token-db /hpc/group/allenlab/scarlett/script/beastie_cache/ldlink_tokens.db \
+    ${save_intermediate_option} \
     --alignBiasP-cutoff $binomialp_cutoff \
     --ase-cutoff $ASE_cutoff \
-    --STAN $stan_path \
-    ${save_intermediate_option} \
-    $nophasing_arg \
-    $simulation_arg \
-    $shapeit2_arg \
     $ld_token_arg \
-    --ldlink-cache-dir /hpc/group/allenlab/scarlett/script/beastie_cache \
-    --ldlink-token-db /hpc/group/allenlab/scarlett/script/beastie_cache/ldlink_tokens.db
+    --model $modelname \
+    --gam-model-name iBEASTIE3_s0.7_GAM/gam4_lambdamodel.pkl \
+    --sigma $sigma \
+    $shapeit2_arg \
+    $simulation_arg \
+    --STAN $stan_path \
+    $nophasing_arg
 
 
