@@ -10,13 +10,13 @@
 #SBATCH -p scavenger
 
 ############### testing command
-# sample=NA12878
-# outDir=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/shapeit4
-# header=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/tmp/VCF/tmp.header.vcf
-# vcfgz=/hpc/group/allenlab/scarlett/output/RNAseq/GIAB/NA12878/NA12878.no_chr.content.SNPs.hets.filtered.vcf.gz
+# sample=SPAG1-9806_polyA
+# outDir=/data/reddylab/scarlett/output/${sample}/tmp/shapeit4
+# header=/data/reddylab/scarlett/output/${sample}/tmp/VCF/tmp.header.vcf
+# vcfgz=/data/reddylab/scarlett/output/${sample}/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
 # N=21
-# ref=/datacommons/allenlab/scarlett/reference/shapeit4/reference/all/ALL.chr${N}.phase3_v5.shapeit2_mvncall_integrated.noSingleton.genotypes.vcf.gz
-# sbatch -p scavenger ../script/RNAseq-analysis/pipeline_scripts2/5__run_shapeit4_chrom.slurm $sample $outDir $header $vcfgz $N $ref
+# ref=/data/reddylab/scarlett/reference/shapeit4/reference/all/ALL.chr${N}.phase3_v5.shapeit2_mvncall_integrated.noSingleton.genotypes.vcf.gz
+# sbatch -p all /data/allenlab/scarlett/github/BEASTIE_pipeline_script/5__run_shapeit4_chrom.slurm $sample $outDir $header $vcfgz $N $ref
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then

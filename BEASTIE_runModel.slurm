@@ -10,20 +10,21 @@
 #SBATCH -p scavenger
 
 ##### testing commands
-# sample=NA12282
-# ancestry=GBR
-# working_dir=/hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample
-# beastie_dir=$working_dir/beastie_202302
+# sample=SPAG1-9806
+# ancestry=EUR
+# working_dir=/data/reddylab/scarlett/output/SPAG1-9806_copy
+# beastie_dir=$working_dir/beastie
 # input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
 # chr_start=1
 # chr_end=22
-# read_length=100
-# output_dir=$beastie_dir/${modelname}_shapeit2_even${read_length}
-# input_simulation_pileup=$working_dir/${sample}.simulation_SNPs_even_100.pileup.gz
+# sigma=0.7
+# read_length=150
+# output_dir=$beastie_dir/runModel_vcf_even${read_length}
+# input_simulation_pileup=$working_dir/${sample}.simulation_SNPs_even_150.pileup.gz
 # filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
 # input_shapeit2=$working_dir/${sample}.shapeit.tsv
-# modelname="iBEASTIE2-improper"
-# sbatch -c 4 --mem=16G -p scavenger --job-name=BEASTIE-${sample} ../script/RNAseq-analysis/pipeline_scripts/BEASTIE_runModel.slurm $input_vcfgz $sample $ancestry $output_dir 1 22 $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup $input_shapeit2
+# modelname="iBEASTIE4"
+# sbatch -c 4 --mem=16G -p all --job-name=BEASTIE-${sample} /data/allenlab/scarlett/github/BEASTIE_pipeline_script/BEASTIE_runModel.slurm $input_vcfgz $sample $ancestry $output_dir 1 22 $sigma $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup
 
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -114,7 +115,7 @@ run_beastie_image \
     --ase-cutoff $ASE_cutoff \
     $ld_token_arg \
     --model $modelname \
-    --gam-model-name iBEASTIE3_s0.7_GAM/gam4_lambdamodel.pkl \
+    --gam-model-name iBEASTIE4_s0.7_GAM/gam4_lambdamodel.pkl \
     --sigma $sigma \
     $shapeit2_arg \
     $simulation_arg \

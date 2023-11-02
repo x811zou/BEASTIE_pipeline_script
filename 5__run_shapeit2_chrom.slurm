@@ -9,9 +9,9 @@
 #SBATCH --error=log/%j.out
 
 ############### testing command
-# sample="HG00096"
-# N="X"
-# sbatch -p scavenger /hpc/group/allenlab/scarlett/script/RNAseq-analysis/pipeline_scripts/4__run_shapeit2_chrom.slurm $sample /hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample/tmp/shapeit2 /hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample/tmp/shapeit2/ref_rm${sample}/1000GP_Phase3_chr${N}_rm${sample}.hap.gz /hpc/group/allenlab/scarlett/output/RNAseq/1000Genome/$sample/tmp/shapeit2/ref_rm${sample}/1000GP_Phase3_rm${sample}.sample /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3_chr${N}.legend.gz /hpc/group/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/genetic_map_chr${N}_combined_b37.txt ${N}
+# sample="SPAG1-9806_polyA"
+# N="21"
+# sbatch -p all /data/allenlab/scarlett/github/BEASTIE_pipeline_script/5__run_shapeit2_chrom.slurm $sample /data/reddylab/scarlett/output/SPAG1-9806_polyA/tmp/shapeit2/shapeit2_EUR /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3_chr${N}.hap.gz /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3.sample /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/1000GP_Phase3_chr${N}.legend.gz /data/allenlab/scarlett/software/shapeit2/reference/1000GP_Phase3/1000GP_Phase3/genetic_map_chr${N}_combined_b37.txt ${N} EUR
 ###############
 
 if [ -n "$SLURM_JOB_ID" ] ; then

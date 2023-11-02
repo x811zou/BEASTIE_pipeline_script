@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=submit-pipelines-SPAG1-original
+#SBATCH --job-name=submit-pipelines-SPAG1-polyA-LCL
 #SBATCH --mem=512M
 #SBATCH -c 1
 #SBATCH --mail-type=END,FAIL
@@ -10,25 +10,7 @@
 #SBATCH --error=log/%j.out
 
 ########### testing commands
-# sbatch /data/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines_SPAG1.slurm
-# JOBID     PARTITION  NAME                                   ST  MIN_MEMORY  TIME_LIMIT    TIME  MIN_CPUS
-# 30340858  all        submit-pipelines-SPAG1-original-check  PD  512M        5:00          0:00  1
-# 30340863  all        SPAG1-9806-alignment                   PD  150G        2-00:00:00    0:00  8
-# 30340864  all        SPAG1-9806-markduplicates-wasp         PD  64G         8:00:00       0:00  6
-# 30340865  all        SPAG1-9806-prep-simulation-sam         PD  4G          1-00:00:00    0:00  4
-# 30340866  all        SPAG1-9806-check_seqDepth              PD  512M        1:00:00       0:00  4
-# 30340868  all        SPAG1-9806-mpileup                     PD  1G          1-00:00:00    0:00  1
-# 30340869  all        SPAG1-9806-genotypingEr                PD  8G          8:00:00       0:00  4
-# 30340870  all        SPAG1-9806-genotypingEr-filter         PD  1G          8:00:00       0:00  4
-# 30340871  all        SPAG1-9806-simulatefastq-even-150      PD  512M        1-00:00:00    0:00  1
-# 30340873  all        SPAG1-9806-simulation-alignment        PD  164G        2-00:00:00    0:00  6
-# 30340874  all        SPAG1-9806-simulation-mpileup          PD  1G          1-00:00:00    0:00  1
-# 30340875  all        SPAG1-9806-EUR-pipeline-check          PD  512M        5:00          0:00  1
-# 30340872  all        SPAG1-9806-shapeit2                    PD  2G          1-00:00:00    0:00  1
-# 30340856  all        submit-pipelines-SPAG1-original        R   512M        365-00:00:00  5:51  1
-# 30340857  all        SPAG1-9806-EUR-pipeline                R   512M        1-12:00:00    5:21  1
-# 30340862  all        SPAG1-9806-trimFastq                   R   5G          8:00:00       4:51  6
-# 30340867  all        SPAG1-9806-hetSNP                      R   2G          8:00:00       3:51  1
+# sbatch /data/allenlab/scarlett/github/BEASTIE_pipeline_script/submit_pipelines_SPAG1_polyA_LCL.slurm
 ###########
 
 if [ -n "$SLURM_JOB_ID" ] ; then
@@ -59,15 +41,16 @@ function submit_and_wait_sample() {
     base_working_dir=/data/reddylab/scarlett/output/
     vcf_dir=/data/cegs_ccgr/data/raw/wes_vcf/M2780_exome_calls.vcf.gz
     ##### SPAG polyA 
-    #raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-835516727
+    raw_fq_dir=/data/cegs_ccgr/analyses/Azenta_30-835516727_LCL/data/rna_seq/processed_raw_reads/Azenta_30-835516727_LCL
     ##### SPAG original
-    raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-803694728_mget/$sample
+    #raw_fq_dir=/data/cegs_ccgr/data/raw/RNAseq/Azenta_30-803694728_mget/$sample
     read_length=150
     simulation_depth=150 #>=100
-    raw_fq_fwd=$(ls $raw_fq_dir/${postfix}*R1*fastq.gz)
-    raw_fq_rev=$(ls $raw_fq_dir/${postfix}*R2*fastq.gz)
+    raw_fq_fwd=$(ls $raw_fq_dir/LCL5157.R1.fastq.gz)
+    raw_fq_rev=$(ls $raw_fq_dir/LCL5157.R2.fastq.gz)
     email=xz195@duke.edu
     partition=all
+
     ### Please do not change below this line
     working_dir=$base_working_dir/$sample
     success_file=$working_dir/success
@@ -110,7 +93,7 @@ export -f wait_for_jobs
 # --hardac           --> default: DCC partition "scavenger". Hardac parition "all". (If else, change it in full_pipeline2.slurm)
 # --email            --> default: xz195@duke.edu. (Change it to your email address.)
 
-samples="SPAG1-9806" #"SPAG1-9806_polyA"
+samples="SPAG1-9806_polyA_LCL" 
 parallel \
     -j 1 \
     --delay 1 \
