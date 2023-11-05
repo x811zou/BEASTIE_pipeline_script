@@ -12,7 +12,7 @@
 ##### testing commands
 # sample=SPAG1-9806
 # ancestry=EUR
-# working_dir=/data/reddylab/scarlett/output/SPAG1-9806_copy
+# working_dir=/data/reddylab/scarlett/output/SPAG1-9806
 # beastie_dir=$working_dir/beastie
 # input_vcfgz=$working_dir/${sample}.no_chr.content.SNPs.hets.filtered.vcf.gz
 # chr_start=1
@@ -20,9 +20,8 @@
 # sigma=0.7
 # read_length=150
 # output_dir=$beastie_dir/runModel_vcf_even${read_length}
-# input_simulation_pileup=$working_dir/${sample}.simulation_SNPs_even_150.pileup.gz
+# input_simulation_pileup=$working_dir/${sample}.simulation_even_150.pileup.gz
 # filtered_hetSNP_file=$working_dir/${sample}_hetSNP_filtered.tsv
-# input_shapeit2=$working_dir/${sample}.shapeit.tsv
 # modelname="iBEASTIE4"
 # sbatch -c 4 --mem=16G -p all --job-name=BEASTIE-${sample} /data/allenlab/scarlett/github/BEASTIE_pipeline_script/BEASTIE_runModel.slurm $input_vcfgz $sample $ancestry $output_dir 1 22 $sigma $read_length $filtered_hetSNP_file $modelname False $input_simulation_pileup
 
@@ -108,8 +107,6 @@ run_beastie_image \
     --min-total-cov $min_total_count \
     --read-length $read_length \
     --output-dir $output_dir \
-    --ldlink-cache-dir /hpc/group/allenlab/scarlett/script/beastie_cache \
-    --ldlink-token-db /hpc/group/allenlab/scarlett/script/beastie_cache/ldlink_tokens.db \
     ${save_intermediate_option} \
     --alignBiasP-cutoff $binomialp_cutoff \
     --ase-cutoff $ASE_cutoff \
@@ -119,7 +116,7 @@ run_beastie_image \
     --sigma $sigma \
     $shapeit2_arg \
     $simulation_arg \
-    --STAN $stan_path \
-    $nophasing_arg
-
+    $nophasing_arg \
+    --ldlink-cache-dir /data/allenlab/scarlett/pipeline_working/beastie_cache \
+    --ldlink-token-db /data/allenlab/scarlett/pipeline_working/beastie_cache/ldlink_tokens.db
 

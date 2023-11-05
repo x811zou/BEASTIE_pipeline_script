@@ -1,4 +1,6 @@
 #!/bin/bash
+
+#### create a link to setup.sh in hardac : ln -s hardac_setup.sh setup.sh
 source ~/.bashrc
 conda activate beastie
 # load module
@@ -27,7 +29,7 @@ min_single=0
 PICARD=/data/allenlab/scarlett/software/picard.jar
 
 run_dir=/data/allenlab/scarlett/pipeline_working/run
-beastie_singularity_image=/data/allenlab/scarlett/BEASTIE-2023-02-21T08:03:20-0500.sif
+beastie_singularity_image=/data/allenlab/scarlett/BEASTIE-2023-11-04T23:04:32-0400.sif
 singularity_mount_paths=( /data/reddylab/scarlett /data/allenlab/scarlett)
 
 shapeit2_executable=/data/allenlab/scarlett/software/shapeit2/bin/shapeit
